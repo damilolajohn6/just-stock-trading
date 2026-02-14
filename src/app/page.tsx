@@ -1,65 +1,99 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { ArrowRight, Leaf, Truck, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { siteConfig } from '@/constants/config';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen">
+      {/* Hero Section - Temporary */}
+      <section className="relative flex min-h-[80vh] items-center justify-center bg-gradient-to-br from-primary/10 via-background to-thrift-sage/10 px-4">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -left-4 -top-4 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute -bottom-8 -right-8 h-96 w-96 rounded-full bg-thrift-sage/10 blur-3xl" />
+        </div>
+        
+        <div className="relative z-10 max-w-4xl text-center">
+          <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
+            Sustainable Fashion
+          </span>
+          
+          <h1 className="mb-6 font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            Discover Pre-Loved
+            <span className="block text-gradient">Fashion Treasures</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+            {siteConfig.description}
           </p>
+          
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="text-lg">
+              <Link href="/products">
+                Shop Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="text-lg">
+              <Link href="/categories">
+                Browse Categories
+              </Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Trust Badges - Temporary */}
+      <section className="border-b border-t bg-muted/50 py-8">
+        <div className="container">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {[
+              { icon: Leaf, title: 'Sustainable', desc: 'Eco-friendly fashion' },
+              { icon: Truck, title: 'Fast Shipping', desc: 'UK-wide delivery' },
+              { icon: RotateCcw, title: 'Easy Returns', desc: '30-day returns' },
+              { icon: ShieldCheck, title: 'Quality Check', desc: 'Verified items' },
+            ].map((badge) => (
+              <div key={badge.title} className="flex flex-col items-center text-center">
+                <badge.icon className="mb-2 h-8 w-8 text-primary" />
+                <h3 className="font-semibold">{badge.title}</h3>
+                <p className="text-sm text-muted-foreground">{badge.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Development Notice */}
+      <section className="py-16">
+        <div className="container max-w-2xl text-center">
+          <h2 className="mb-4 text-2xl font-bold">🚧 Under Construction</h2>
+          <p className="mb-6 text-muted-foreground">
+            This is the Phase 1 foundation of the Thrift Marketplace. 
+            The homepage funnel, navigation, and all features will be built in subsequent phases.
+          </p>
+          <div className="rounded-lg border bg-card p-6 text-left">
+            <h3 className="mb-3 font-semibold">Phase 1 Complete ✓</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>✓ Project structure and architecture</li>
+              <li>✓ TypeScript configuration</li>
+              <li>✓ Tailwind CSS with custom theme</li>
+              <li>✓ Environment variable validation</li>
+              <li>✓ Type definitions</li>
+              <li>✓ Utility functions</li>
+              <li>✓ Constants and configuration</li>
+              <li>✓ Root layout with providers</li>
+            </ul>
+            <p className="mt-4 text-sm">
+              <strong>Next:</strong> Phase 2 - Database Schema & Supabase Setup
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Placeholder */}
+      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
+        <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
+      </footer>
+    </main>
   );
 }

@@ -12,30 +12,32 @@ import {
 } from '@/components/features/products';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/shared/empty-state';
-import { Pagination } from '@/components/shared/pagination'; 
+import { Pagination } from '@/components/shared/pagination';
 
 // Force dynamic rendering because this page depends on searchParams
 export const dynamic = 'force-dynamic';
 
+interface SearchParams {
+  category?: string;
+  sort?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sizes?: string | string[];
+  brands?: string | string[];
+  conditions?: string | string[];
+  colors?: string | string[];
+  page?: string;
+  search?: string;
+}
+
 interface ProductsPageProps {
-  searchParams: {
-    category?: string;
-    sort?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    sizes?: string | string[];
-    brands?: string | string[];
-    conditions?: string | string[];
-    colors?: string | string[];
-    page?: string;
-    search?: string;
-  };
+  searchParams: Promise<SearchParams>;
 }
 
 // Data fetching function
-async function getProducts(params: ProductsPageProps['searchParams']) {
+async function getProducts(params: SearchParams) {
   const supabase = await createClient();
-  
+
   const page = parseInt(params.page || '1');
   const limit = 12;
   const from = (page - 1) * limit;
@@ -44,12 +46,15 @@ async function getProducts(params: ProductsPageProps['searchParams']) {
   // Start building the query
   let query = supabase
     .from('products')
-    .select(`
+    .select(
+      `
       *,
       category:categories!inner(id, name, slug),
       images:product_images(url, alt_text, is_primary),
       variants:product_variants(size, color, stock_quantity, is_available)
-    `, { count: 'exact' })
+    `,
+      { count: 'exact' }
+    )
     .eq('is_published', true);
 
   // Apply filters
@@ -74,7 +79,7 @@ async function getProducts(params: ProductsPageProps['searchParams']) {
     const conditions = Array.isArray(params.conditions) ? params.conditions : [params.conditions];
     if (conditions.length > 0) query = query.in('condition', conditions as any);
   }
-  
+
   if (params.colors) {
     const colors = Array.isArray(params.colors) ? params.colors : [params.colors];
     if (colors.length > 0) query = query.in('color', colors);
@@ -82,7 +87,9 @@ async function getProducts(params: ProductsPageProps['searchParams']) {
 
   if (params.search) {
     const searchTerm = params.search;
-    query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%`);
+    query = query.or(
+      `name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%`
+    );
   }
 
   // Sorting
@@ -119,8 +126,11 @@ async function getProducts(params: ProductsPageProps['searchParams']) {
   const formattedProducts = data.map((product: any) => ({
     ...product,
     // Ensure images are sorted by primary first
-    images: product.images?.sort((a: any, b: any) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)) || [],
-    image: product.images?.find((img: any) => img.is_primary)?.url || product.images?.[0]?.url || null,
+    images:
+      product.images?.sort((a: any, b: any) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)) ||
+      [],
+    image:
+      product.images?.find((img: any) => img.is_primary)?.url || product.images?.[0]?.url || null,
     // Add computed fields if needed
     isNew: new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Created within last 7 days
   }));
@@ -135,7 +145,7 @@ async function getProducts(params: ProductsPageProps['searchParams']) {
 // Skeleton loader
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="space-y-3">
           <Skeleton className="aspect-[3/4] rounded-lg" />
@@ -151,9 +161,12 @@ function ProductGridSkeleton() {
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  // Await searchParams (Next.js 15+ returns a Promise)
+  const params = await searchParams;
+
   // Fetch data
-  const { products, total, totalPages } = await getProducts(searchParams);
-  
+  const { products, total, totalPages } = await getProducts(params);
+
   // Fetch available brands for filter (could be cached/optimized)
   const supabase = await createClient();
   const { data: brandData } = await supabase
@@ -161,29 +174,28 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     .select('brand')
     .not('brand', 'is', null)
     .eq('is_published', true);
-    
+
   // Get unique brands
-  const uniqueBrands = Array.from(new Set(brandData?.map((p) => p.brand).filter(Boolean) as string[])).sort();
+  const uniqueBrands = Array.from(
+    new Set(brandData?.map((p) => p.brand).filter(Boolean) as string[])
+  ).sort();
 
   return (
     <Container className="py-6">
-      <Breadcrumb
-        items={[{ label: 'Products' }]}
-        className="mb-4"
-      />
+      <Breadcrumb items={[{ label: 'Products' }]} className="mb-4" />
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Sidebar Filters - Desktop */}
-        <aside className="hidden lg:block w-64 flex-shrink-0">
+        <aside className="hidden w-64 flex-shrink-0 lg:block">
           <div className="sticky top-24">
             <ProductFilters availableBrands={uniqueBrands} />
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0">
+        <main className="min-w-0 flex-1">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold">All Products</h1>
               <p className="text-muted-foreground">
@@ -204,19 +216,19 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             {products.length > 0 ? (
               <>
                 <ProductGrid products={products} columns={4} />
-                
+
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="mt-12 flex justify-center">
-                    <Pagination 
-                      currentPage={parseInt(searchParams.page || '1')} 
-                      totalPages={totalPages} 
+                    <Pagination
+                      currentPage={parseInt(params.page || '1')}
+                      totalPages={totalPages}
                     />
                   </div>
                 )}
               </>
             ) : (
-              <EmptyState 
+              <EmptyState
                 title="No products found"
                 description="Try adjusting your filters or search criteria."
                 actionLabel="Clear Filters"

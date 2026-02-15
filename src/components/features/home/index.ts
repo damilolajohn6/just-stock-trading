@@ -10,3 +10,7 @@ export { InstagramFeed } from './instagram-feed';
 export { NewsletterSection } from './newsletter-section';
 export { FlashSaleBanner } from './flash-sale-banner';
 export { CountdownTimer } from './countdown-timer';
+export { FunnelHero } from './funnel-hero';
+export { ValueProps } from './value-props';
+export { ImageShowcase } from './image-showcase';
+export { PhotoGallery } from './photo-gallery';

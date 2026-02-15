@@ -13,22 +13,21 @@ import {
   LogOut,
   Shield,
 } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/shared/logo';
 import { useUIStore } from '@/store/ui-store';
 import { useAuthContext } from '@/components/providers/auth-provider';
-import { mainNavItems } from '@/constants/navigation';
+import type { MainNavItem } from '@/constants/navigation';
 import { cn } from '@/utils/cn';
 
-export function MobileMenuDrawer() {
+interface MobileMenuDrawerProps {
+  navItems?: MainNavItem[];
+}
+
+export function MobileMenuDrawer({ navItems = [] }: MobileMenuDrawerProps) {
   const pathname = usePathname();
   const { isMobileMenuOpen, closeMobileMenu } = useUIStore();
   const { user, profile, isAuthenticated, isAdmin, signOut } = useAuthContext();
@@ -36,9 +35,7 @@ export function MobileMenuDrawer() {
 
   const toggleExpanded = (label: string) => {
     setExpandedItems((prev) =>
-      prev.includes(label)
-        ? prev.filter((item) => item !== label)
-        : [...prev, label]
+      prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
     );
   };
 
@@ -53,8 +50,8 @@ export function MobileMenuDrawer() {
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={closeMobileMenu}>
-      <SheetContent side="left" className="flex flex-col p-0 w-[300px]">
-        <SheetHeader className="p-4 border-b">
+      <SheetContent side="left" className="flex w-[300px] flex-col p-0">
+        <SheetHeader className="border-b p-4">
           <SheetTitle className="text-left">
             <Logo size="sm" />
           </SheetTitle>
@@ -64,7 +61,7 @@ export function MobileMenuDrawer() {
           <nav className="p-4">
             {/* Main navigation */}
             <ul className="space-y-1">
-              {mainNavItems.map((item) => (
+              {navItems.map((item) => (
                 <li key={item.label}>
                   {item.children ? (
                     <div>
@@ -94,8 +91,7 @@ export function MobileMenuDrawer() {
                                 className={cn(
                                   'block rounded-md px-3 py-2 text-sm',
                                   'hover:bg-accent hover:text-accent-foreground',
-                                  pathname === child.href &&
-                                    'bg-accent text-accent-foreground'
+                                  pathname === child.href && 'bg-accent text-accent-foreground'
                                 )}
                               >
                                 {child.label}
@@ -127,7 +123,7 @@ export function MobileMenuDrawer() {
             {/* Account section */}
             {isAuthenticated && user ? (
               <div className="space-y-1">
-                <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Account
                 </p>
                 <Link
@@ -167,7 +163,7 @@ export function MobileMenuDrawer() {
                   <Link
                     href="/admin"
                     onClick={handleLinkClick}
-                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent text-primary"
+                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-primary hover:bg-accent"
                   >
                     <Shield className="h-4 w-4" />
                     Admin Dashboard
@@ -189,12 +185,7 @@ export function MobileMenuDrawer() {
                 <Button className="w-full" asChild onClick={handleLinkClick}>
                   <Link href="/login">Sign In</Link>
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  asChild
-                  onClick={handleLinkClick}
-                >
+                <Button variant="outline" className="w-full" asChild onClick={handleLinkClick}>
                   <Link href="/register">Create Account</Link>
                 </Button>
               </div>

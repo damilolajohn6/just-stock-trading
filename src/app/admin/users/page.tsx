@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from '@/lib/supabase/admin';
 import {
   Table,
   TableBody,
@@ -6,27 +6,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { PageHeader } from "@/components/shared/page-header";
-import { UserActions } from "@/components/features/admin/user-actions";
-import { formatDate } from "@/utils/format";
-import { getInitials } from "@/utils/helpers";
+} from '@/components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { PageHeader } from '@/components/shared/page-header';
+import { UserActions } from '@/components/features/admin/user-actions';
+import { formatDate } from '@/utils/format';
+import { getInitials } from '@/utils/helpers';
 
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }) {
   const supabase = createAdminClient();
-  const search = searchParams.q || "";
+  const { q } = await searchParams;
+  const search = q || '';
 
-  let query = supabase
-    .from("profiles")
-    .select("*")
-    .order("created_at", { ascending: false });
+  let query = supabase.from('profiles').select('*').order('created_at', { ascending: false });
 
   if (search) {
     query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`);
@@ -39,12 +37,12 @@ export default async function AdminUsersPage({
       <PageHeader title="Users" description="Manage user accounts and roles" />
 
       <div className="flex items-center space-x-2">
-        <form className="flex-1 max-w-sm">
+        <form className="max-w-sm flex-1">
           <Input name="q" placeholder="Search users..." defaultValue={search} />
         </form>
       </div>
 
-      <div className="border rounded-lg">
+      <div className="rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -63,23 +61,17 @@ export default async function AdminUsersPage({
                     <Avatar>
                       <AvatarImage src={user.avatar_url || undefined} />
                       <AvatarFallback>
-                        {getInitials(user.full_name || user.email || "")}
+                        {getInitials(user.full_name || user.email || '')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="font-medium">
-                        {user.full_name || "No Name"}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {user.email}
-                      </span>
+                      <span className="font-medium">{user.full_name || 'No Name'}</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    variant={user.role === "admin" ? "default" : "secondary"}
-                  >
+                  <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                     {user.role}
                   </Badge>
                 </TableCell>
@@ -87,10 +79,7 @@ export default async function AdminUsersPage({
                   {user.is_blocked ? (
                     <Badge variant="destructive">Blocked</Badge>
                   ) : (
-                    <Badge
-                      variant="outline"
-                      className="text-green-600 border-green-600"
-                    >
+                    <Badge variant="outline" className="border-green-600 text-green-600">
                       Active
                     </Badge>
                   )}
@@ -99,11 +88,7 @@ export default async function AdminUsersPage({
                   {formatDate(user.created_at)}
                 </TableCell>
                 <TableCell className="text-right">
-                  <UserActions
-                    userId={user.id}
-                    isBlocked={user.is_blocked}
-                    role={user.role}
-                  />
+                  <UserActions userId={user.id} isBlocked={user.is_blocked} role={user.role} />
                 </TableCell>
               </TableRow>
             ))}

@@ -3,14 +3,26 @@ import { Plus, Search } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/utils/format';
 import { PageHeader } from '@/components/shared/page-header';
 
-export default async function AdminProductsPage({ searchParams }: { searchParams: { q?: string } }) {
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const supabase = createAdminClient();
-  const search = searchParams.q || '';
+  const { q } = await searchParams;
+  const search = q || '';
 
   let query = supabase
     .from('products')
@@ -29,25 +41,20 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <PageHeader title="Products" description="Manage your inventory" />
         <Button asChild>
           <Link href="/admin/products/new">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Product
           </Link>
         </Button>
       </div>
 
       <div className="flex items-center space-x-2">
-        <form className="flex-1 max-w-sm relative">
+        <form className="relative max-w-sm flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            name="q" 
-            placeholder="Search products..." 
-            className="pl-9" 
-            defaultValue={search}
-          />
+          <Input name="q" placeholder="Search products..." className="pl-9" defaultValue={search} />
         </form>
       </div>
 
-      <div className="border rounded-lg">
+      <div className="rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -80,7 +87,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             ))}
             {products?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-24">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No products found.
                 </TableCell>
               </TableRow>

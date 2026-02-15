@@ -43,56 +43,8 @@ export interface MainNavItem {
   }[];
 }
 
-export const mainNavItems: MainNavItem[] = [
-  {
-    label: 'Women',
-    href: '/categories/women',
-    children: [
-      { label: 'All Women', href: '/categories/women', description: 'Browse all women\'s clothing' },
-      { label: 'Dresses', href: '/categories/women/dresses' },
-      { label: 'Tops', href: '/categories/women/tops' },
-      { label: 'Bottoms', href: '/categories/women/bottoms' },
-      { label: 'Outerwear', href: '/categories/women/outerwear' },
-      { label: 'Activewear', href: '/categories/women/activewear' },
-    ],
-  },
-  {
-    label: 'Men',
-    href: '/categories/men',
-    children: [
-      { label: 'All Men', href: '/categories/men', description: 'Browse all men\'s clothing' },
-      { label: 'Shirts', href: '/categories/men/shirts' },
-      { label: 'T-Shirts', href: '/categories/men/t-shirts' },
-      { label: 'Trousers', href: '/categories/men/trousers' },
-      { label: 'Outerwear', href: '/categories/men/outerwear' },
-      { label: 'Sportswear', href: '/categories/men/sportswear' },
-    ],
-  },
-  {
-    label: 'Vintage',
-    href: '/categories/vintage',
-    children: [
-      { label: 'All Vintage', href: '/categories/vintage', description: 'Browse vintage collection' },
-      { label: '70s & 80s', href: '/categories/vintage/70s-80s' },
-      { label: '90s', href: '/categories/vintage/90s' },
-      { label: 'Y2K', href: '/categories/vintage/y2k' },
-      { label: 'Designer', href: '/categories/vintage/designer' },
-    ],
-  },
-  {
-    label: 'Accessories',
-    href: '/categories/accessories',
-    children: [
-      { label: 'All Accessories', href: '/categories/accessories' },
-      { label: 'Bags', href: '/categories/accessories/bags' },
-      { label: 'Jewelry', href: '/categories/accessories/jewelry' },
-      { label: 'Hats', href: '/categories/accessories/hats' },
-      { label: 'Belts', href: '/categories/accessories/belts' },
-    ],
-  },
-  { label: 'New Arrivals', href: '/products?sort=newest' },
-  { label: 'Sale', href: '/products?sale=true' },
-];
+// mainNavItems is now fetched dynamically from Supabase via getNavCategories()
+// See: src/lib/supabase/queries.ts
 
 // User account navigation
 export const accountNavItems: NavItem[] = [
@@ -140,15 +92,11 @@ export const adminNavGroups: AdminNavGroup[] = [
   },
   {
     label: 'Customers',
-    items: [
-      { label: 'Users', href: '/admin/users', icon: Users },
-    ],
+    items: [{ label: 'Users', href: '/admin/users', icon: Users }],
   },
   {
     label: 'Configuration',
-    items: [
-      { label: 'Settings', href: '/admin/settings', icon: Settings },
-    ],
+    items: [{ label: 'Settings', href: '/admin/settings', icon: Settings }],
   },
 ];
 

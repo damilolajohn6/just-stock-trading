@@ -4,17 +4,13 @@ import { MobileBottomNav } from '@/components/layout/mobile-bottom-nav';
 import { SearchDrawer } from '@/components/layout/header/search-drawer';
 
 import {
-  HeroSection,
   AnnouncementBar,
-  CategoryGrid,
-  FeaturedProducts,
+  FunnelHero,
+  ValueProps,
+  ImageShowcase,
+  PhotoGallery,
   ShopByWeight,
-  TrendingSection,
-  TrustBadges,
-  Testimonials,
-  InstagramFeed,
   NewsletterSection,
-  FlashSaleBanner,
 } from '@/components/features/home';
 
 export default function HomePage() {
@@ -22,34 +18,22 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col">
       <AnnouncementBar />
       <Header />
-      
+
       <main className="flex-1 pb-20 lg:pb-0">
-        {/* Hero Section */}
-        <HeroSection />
+        {/* Full-screen Hero */}
+        <FunnelHero />
 
-        {/* Trust Badges */}
-        <TrustBadges />
+        {/* Value Proposition Strip */}
+        <ValueProps />
 
-        {/* Categories */}
-        <CategoryGrid />
+        {/* Alternating Image/Text Sections */}
+        <ImageShowcase />
 
-        {/* Flash Sale Banner */}
-        <FlashSaleBanner />
-
-        {/* Featured Products */}
-        <FeaturedProducts />
+        {/* Photo Gallery */}
+        <PhotoGallery />
 
         {/* Shop by Weight/Bundles */}
         <ShopByWeight />
-
-        {/* Trending Items */}
-        <TrendingSection />
-
-        {/* Testimonials */}
-        <Testimonials />
-
-        {/* Instagram Feed */}
-        <InstagramFeed />
 
         {/* Newsletter */}
         <NewsletterSection />

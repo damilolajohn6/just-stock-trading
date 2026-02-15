@@ -13,8 +13,13 @@ import { SearchBar } from './search-bar';
 import { MobileMenuDrawer } from './mobile-menu-drawer';
 import { useUIStore } from '@/store/ui-store';
 import { useCartStore } from '@/store/cart-store';
+import type { MainNavItem } from '@/constants/navigation';
 
-export function Header() {
+interface HeaderClientProps {
+  navItems?: MainNavItem[];
+}
+
+export function HeaderClient({ navItems = [] }: HeaderClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const { openMobileMenu, openSearch } = useUIStore();
   const itemCount = useCartStore((state) => state.getItemCount());
@@ -33,29 +38,14 @@ export function Header() {
       <header
         className={cn(
           'sticky top-0 z-50 w-full transition-all duration-200',
-          isScrolled
-            ? 'bg-background/95 backdrop-blur-md shadow-sm border-b'
-            : 'bg-background'
+          isScrolled ? 'border-b bg-background/95 shadow-sm backdrop-blur-md' : 'bg-background'
         )}
       >
-        {/* Top bar - Optional promo banner */}
-        <div className="hidden lg:block bg-primary text-primary-foreground py-1.5 text-center text-sm">
-          <p>
-            🌿 Free shipping on orders over £50 | Use code{' '}
-            <span className="font-semibold">THRIFT20</span> for 20% off
-          </p>
-        </div>
-
         {/* Main header */}
         <div className="container">
           <div className="flex h-16 items-center justify-between gap-4">
             {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={openMobileMenu}
-            >
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={openMobileMenu}>
               <Menu className="h-5 w-5" />
               <span className="sr-only">Open menu</span>
             </Button>
@@ -64,33 +54,23 @@ export function Header() {
             <Logo className="flex-shrink-0" />
 
             {/* Desktop Navigation */}
-            <DesktopNav className="hidden lg:flex" />
+            <DesktopNav className="hidden lg:flex" navItems={navItems} />
 
             {/* Search bar - Desktop */}
-            <div className="hidden lg:flex flex-1 max-w-md mx-4">
+            <div className="mx-4 hidden max-w-md flex-1 lg:flex">
               <SearchBar />
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-1 sm:gap-2">
               {/* Search button - Mobile */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={openSearch}
-              >
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={openSearch}>
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
               </Button>
 
               {/* Wishlist - Desktop */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hidden sm:flex"
-                asChild
-              >
+              <Button variant="ghost" size="icon" className="hidden sm:flex" asChild>
                 <Link href="/wishlist">
                   <Heart className="h-5 w-5" />
                   <span className="sr-only">Wishlist</span>
@@ -108,7 +88,7 @@ export function Header() {
       </header>
 
       {/* Mobile menu drawer */}
-      <MobileMenuDrawer />
+      <MobileMenuDrawer navItems={navItems} />
     </>
   );
 }

@@ -1,0 +1,12 @@
+export { HeroSection } from './hero-section';
+export { AnnouncementBar } from './announcement-bar';
+export { CategoryGrid } from './category-grid';
+export { FeaturedProducts } from './featured-products';
+export { ShopByWeight } from './shop-by-weight';
+export { TrendingSection } from './trending-section';
+export { TrustBadges } from './trust-badges';
+export { Testimonials } from './testimonials';
+export { InstagramFeed } from './instagram-feed';
+export { NewsletterSection } from './newsletter-section';
+export { FlashSaleBanner } from './flash-sale-banner';
+export { CountdownTimer } from './countdown-timer';

@@ -153,7 +153,7 @@ export function Footer() {
       <div className="border-t">
         <div className="container py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-muted-foreground">
-            <p>© {currentYear} Thrift Factory. All rights reserved.</p>
+            <p>© {currentYear} Just Stock Trading. All rights reserved.</p>
             <div className="flex gap-4">
               <Link href="/privacy" className="hover:text-foreground transition-colors">
                 Privacy Policy

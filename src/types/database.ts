@@ -1160,6 +1160,38 @@ export type Database = {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      get_dashboard_stats: {
+        Args: Record<string, never>;
+        Returns: {
+          total_revenue: number;
+          revenue_change: number;
+          total_orders: number;
+          orders_change: number;
+          avg_order_value: number;
+          active_customers: number;
+          customers_change: number;
+        };
+      };
+      get_daily_revenue: {
+        Args: {
+          start_date: string;
+          end_date: string;
+        };
+        Returns: {
+          date: string;
+          revenue: number;
+        }[];
+      };
+      get_category_sales: {
+        Args: {
+          start_date: string;
+          end_date: string;
+        };
+        Returns: {
+          category: string;
+          sales: number;
+        }[];
+      };
     };
     Enums: {
       order_status:

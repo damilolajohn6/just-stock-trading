@@ -16,18 +16,18 @@ export async function middleware(request: NextRequest) {
   // Create Supabase client
   const { supabase, response } = createMiddlewareClient(request);
 
-  // Refresh session if expired
-  const { data: { session } } = await supabase.auth.getSession();
+  // Authenticate user (getUser is secure, unlike getSession)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // Check route type
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
   // Redirect to login if accessing protected route without session
-  if (isProtectedRoute && !session) {
+  if (isProtectedRoute && !user) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(redirectUrl);
@@ -35,17 +35,25 @@ export async function middleware(request: NextRequest) {
 
   // Check admin access
   if (isAdminRoute) {
-    if (!session) {
+    if (!user) {
       const redirectUrl = new URL('/login', request.url);
       redirectUrl.searchParams.set('redirectTo', pathname);
       return NextResponse.redirect(redirectUrl);
     }
 
-    // Fetch user profile to check role
-    const { data: profile } = await supabase
+    // Fetch user profile to check role using service-role client to bypass RLS
+    // (The profiles table RLS policy has recursion issues with the anon key)
+    const { createClient } = await import('@supabase/supabase-js');
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+
+    const { data: profile } = await adminSupabase
       .from('profiles')
       .select('role, is_blocked')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single();
 
     // Check if user is blocked
@@ -61,7 +69,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect to account if accessing auth routes while authenticated
-  if (isAuthRoute && session) {
+  if (isAuthRoute && user) {
     const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/account';
     return NextResponse.redirect(new URL(redirectTo, request.url));
   }

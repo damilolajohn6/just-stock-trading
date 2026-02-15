@@ -12,17 +12,18 @@ import { OrderStatusBadge } from '@/components/features/orders/order-status-badg
 import { formatCurrency, formatDate } from '@/utils/format';
 
 interface OrderDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
+  const { id } = await params;
   const user = await getUser();
 
   if (!user) {
     redirect('/login');
   }
 
-  const order = await getOrder(params.id);
+  const order = await getOrder(id);
 
   if (!order) {
     notFound();
@@ -34,16 +35,16 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+          <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
             <Link href="/account/orders" className="hover:text-primary">
               Orders
             </Link>
             <span>/</span>
             <span>#{order.order_number}</span>
           </div>
-          <h1 className="text-2xl font-bold flex items-center gap-3">
+          <h1 className="flex items-center gap-3 text-2xl font-bold">
             Order #{order.order_number}
             <OrderStatusBadge status={order.status} />
           </h1>
@@ -51,14 +52,17 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             Placed on {formatDate(order.created_at, { dateStyle: 'long', timeStyle: 'short' })}
           </p>
         </div>
-        
+
         {/* Payment Status */}
         <div className="flex flex-col items-end">
-          <p className="text-sm font-medium mb-1">Payment Status</p>
-          <Badge 
+          <p className="mb-1 text-sm font-medium">Payment Status</p>
+          <Badge
             variant={
-              order.payment_status === 'paid' ? 'success' : 
-              order.payment_status === 'failed' ? 'destructive' : 'warning'
+              order.payment_status === 'paid'
+                ? 'success'
+                : order.payment_status === 'failed'
+                  ? 'destructive'
+                  : 'warning'
             }
           >
             {order.payment_status.toUpperCase()}
@@ -67,8 +71,8 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       </div>
 
       {/* Main Content */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
           {/* Items */}
           <Card>
             <CardHeader>
@@ -78,7 +82,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <div className="space-y-6">
                 {order.items.map((item: any) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="relative h-20 w-20 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-muted">
                       {item.product_snapshot?.image ? (
                         <Image
                           src={item.product_snapshot.image}
@@ -92,20 +96,16 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex justify-between gap-2">
-                        <h4 className="font-medium line-clamp-2">
-                          {item.product_snapshot.name}
-                        </h4>
-                        <p className="font-medium">
-                          {formatCurrency(item.total_price)}
-                        </p>
+                        <h4 className="line-clamp-2 font-medium">{item.product_snapshot.name}</h4>
+                        <p className="font-medium">{formatCurrency(item.total_price)}</p>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="mt-1 text-sm text-muted-foreground">
                         Qty: {item.quantity} × {formatCurrency(item.unit_price)}
                       </p>
                       {(item.product_snapshot.size || item.product_snapshot.color) && (
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           {[item.product_snapshot.size, item.product_snapshot.color]
                             .filter(Boolean)
                             .join(' / ')}
@@ -124,32 +124,26 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <CardTitle>Order Status</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="relative pl-6 border-l-2 border-muted space-y-8">
+              <div className="relative space-y-8 border-l-2 border-muted pl-6">
                 <div className="relative">
                   <div className="absolute -left-[31px] top-0 h-4 w-4 rounded-full border-2 border-primary bg-background" />
-                  <p className="font-medium text-sm">Order Placed</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(order.created_at)}
-                  </p>
+                  <p className="text-sm font-medium">Order Placed</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(order.created_at)}</p>
                 </div>
-                
+
                 {order.status === 'confirmed' && (
                   <div className="relative">
                     <div className="absolute -left-[31px] top-0 h-4 w-4 rounded-full border-2 border-primary bg-primary" />
-                    <p className="font-medium text-sm">Confirmed</p>
-                    <p className="text-xs text-muted-foreground">
-                      We&apos;ve received your order
-                    </p>
+                    <p className="text-sm font-medium">Confirmed</p>
+                    <p className="text-xs text-muted-foreground">We&apos;ve received your order</p>
                   </div>
                 )}
 
                 {order.status === 'shipped' && (
                   <div className="relative">
                     <div className="absolute -left-[31px] top-0 h-4 w-4 rounded-full border-2 border-primary bg-primary" />
-                    <p className="font-medium text-sm">Shipped</p>
-                    <p className="text-xs text-muted-foreground">
-                      Your order is on the way
-                    </p>
+                    <p className="text-sm font-medium">Shipped</p>
+                    <p className="text-xs text-muted-foreground">Your order is on the way</p>
                   </div>
                 )}
               </div>
@@ -180,7 +174,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                   </div>
                 )}
                 <Separator />
-                <div className="flex justify-between font-bold text-base">
+                <div className="flex justify-between text-base font-bold">
                   <span>Total</span>
                   <span>{formatCurrency(order.total)}</span>
                 </div>
@@ -194,11 +188,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div>
-                <h4 className="font-medium mb-1 flex items-center gap-2">
+                <h4 className="mb-1 flex items-center gap-2 font-medium">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                   Address
                 </h4>
-                <div className="text-muted-foreground pl-6">
+                <div className="pl-6 text-muted-foreground">
                   <p>
                     {shippingAddress.first_name} {shippingAddress.last_name}
                   </p>
@@ -212,11 +206,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               </div>
 
               <div>
-                <h4 className="font-medium mb-1 flex items-center gap-2">
+                <h4 className="mb-1 flex items-center gap-2 font-medium">
                   <Truck className="h-4 w-4 text-muted-foreground" />
                   Method
                 </h4>
-                <p className="text-muted-foreground pl-6 capitalize">
+                <p className="pl-6 capitalize text-muted-foreground">
                   {order.shipping_method?.replace('_', ' ') || 'Standard'}
                 </p>
               </div>

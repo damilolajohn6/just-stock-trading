@@ -9,10 +9,10 @@ import { getOrder } from '@/actions/orders';
 import { formatCurrency, formatDate } from '@/utils/format';
 
 interface SuccessPageProps {
-  searchParams: { 
+  searchParams: Promise<{
     session_id?: string;
     order_id?: string;
-  };
+  }>;
 }
 
 async function SuccessContent({ orderId }: { orderId: string }) {
@@ -30,23 +30,23 @@ async function SuccessContent({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       <div className="text-center">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 text-green-600 mb-6">
+        <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600">
           <CheckCircle2 className="h-10 w-10" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Payment Successful!</h1>
-        <p className="text-muted-foreground text-lg">
+        <h1 className="mb-2 text-3xl font-bold">Payment Successful!</h1>
+        <p className="text-lg text-muted-foreground">
           Thank you for your purchase. Your order has been confirmed.
         </p>
       </div>
 
       <Card>
         <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 pb-6 border-b">
+          <div className="mb-6 flex flex-col justify-between gap-4 border-b pb-6 md:flex-row">
             <div>
               <p className="text-sm text-muted-foreground">Order Number</p>
-              <p className="font-semibold text-lg">{order.order_number}</p>
+              <p className="text-lg font-semibold">{order.order_number}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Date</p>
@@ -54,7 +54,7 @@ async function SuccessContent({ orderId }: { orderId: string }) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total</p>
-              <p className="font-semibold text-lg">{formatCurrency(order.total)}</p>
+              <p className="text-lg font-semibold">{formatCurrency(order.total)}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Payment Method</p>
@@ -65,7 +65,7 @@ async function SuccessContent({ orderId }: { orderId: string }) {
           <div className="space-y-4">
             <h3 className="font-semibold">Items Ordered</h3>
             {order.items.map((item: any) => (
-              <div key={item.id} className="flex justify-between items-center">
+              <div key={item.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="font-medium">
                     {item.quantity}x {item.product_snapshot.name}
@@ -85,7 +85,7 @@ async function SuccessContent({ orderId }: { orderId: string }) {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Button asChild size="lg" className="flex-1">
           <Link href="/account/orders">
             View Order History
@@ -93,17 +93,16 @@ async function SuccessContent({ orderId }: { orderId: string }) {
           </Link>
         </Button>
         <Button asChild variant="outline" size="lg" className="flex-1">
-          <Link href="/products">
-            Continue Shopping
-          </Link>
+          <Link href="/products">Continue Shopping</Link>
         </Button>
       </div>
     </div>
   );
 }
 
-export default function SuccessPage({ searchParams }: SuccessPageProps) {
-  const orderId = searchParams.order_id;
+export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+  const params = await searchParams;
+  const orderId = params.order_id;
 
   // If Stripe session ID is present but no order ID, we could verify session here
   // For simplicity, we passed order_id in success_url

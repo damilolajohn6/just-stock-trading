@@ -14,7 +14,7 @@ export function NewsletterSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) return;
 
     setIsLoading(true);
@@ -24,19 +24,17 @@ export function NewsletterSection() {
 
     setIsLoading(false);
     setIsSubscribed(true);
-    toast.success('Welcome to the Thrift Factory family!');
+    toast.success('Welcome to the Just Stock Trading family!');
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
+    <section className="bg-primary py-16 text-primary-foreground lg:py-24">
       <Container size="sm">
         <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Get 10% Off Your First Order
-          </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-            Subscribe to our newsletter for exclusive drops, styling tips, 
-            and member-only discounts. Join 50,000+ thrift lovers!
+          <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Get 10% Off Your First Order</h2>
+          <p className="mx-auto mb-8 max-w-xl text-lg text-primary-foreground/80">
+            Subscribe to our newsletter for exclusive drops, styling tips, and member-only
+            discounts. Join 50,000+ thrift lovers!
           </p>
 
           {isSubscribed ? (
@@ -47,7 +45,7 @@ export function NewsletterSection() {
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+              className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
             >
               <Input
                 type="email"
@@ -55,7 +53,7 @@ export function NewsletterSection() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 h-12"
+                className="h-12 border-white/20 bg-white/10 text-white placeholder:text-white/60"
               />
               <Button
                 type="submit"
@@ -76,7 +74,7 @@ export function NewsletterSection() {
             </form>
           )}
 
-          <p className="text-sm text-primary-foreground/60 mt-4">
+          <p className="mt-4 text-sm text-primary-foreground/60">
             No spam, ever. Unsubscribe anytime.
           </p>
         </div>

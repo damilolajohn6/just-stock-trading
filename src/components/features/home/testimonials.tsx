@@ -20,8 +20,8 @@ const testimonials = [
     location: 'London',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80',
     rating: 5,
-    text: "I'm obsessed with Thrift Factory! The quality of the vintage pieces is amazing, and the prices are unbeatable. My wardrobe has never looked better!",
-    product: 'Vintage Levi\'s Jacket',
+    text: "I'm obsessed with Just Stock Trading! The quality of the vintage pieces is amazing, and the prices are unbeatable. My wardrobe has never looked better!",
+    product: "Vintage Levi's Jacket",
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const testimonials = [
     location: 'Manchester',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80',
     rating: 5,
-    text: "Best thrift store online! Fast shipping, great customer service, and the 5kg bundle was incredible value. Got so many unique pieces.",
+    text: 'Best thrift store online! Fast shipping, great customer service, and the 5kg bundle was incredible value. Got so many unique pieces.',
     product: '5kg Mystery Bundle',
   },
   {
@@ -38,7 +38,7 @@ const testimonials = [
     location: 'Bristol',
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80',
     rating: 5,
-    text: "Love that I can shop sustainably without compromising on style. The vintage section is a treasure trove. Already planning my next haul!",
+    text: 'Love that I can shop sustainably without compromising on style. The vintage section is a treasure trove. Already planning my next haul!',
     product: '90s Collection',
   },
   {
@@ -47,7 +47,7 @@ const testimonials = [
     location: 'Edinburgh',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80',
     rating: 5,
-    text: "As a reseller, the wholesale bundles are perfect. Great variety, excellent condition, and the team is super helpful. Highly recommend!",
+    text: 'As a reseller, the wholesale bundles are perfect. Great variety, excellent condition, and the team is super helpful. Highly recommend!',
     product: '25kg Wholesale Bundle',
   },
 ];
@@ -56,13 +56,11 @@ export function Testimonials() {
   return (
     <section className="py-16 lg:py-24">
       <Container>
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Loved by Thrift Lovers
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Join thousands of happy customers who&apos;ve discovered their new 
-            favourite pieces with us.
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Loved by Thrift Lovers</h2>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Join thousands of happy customers who&apos;ve discovered their new favourite pieces with
+            us.
           </p>
         </div>
 
@@ -71,16 +69,16 @@ export function Testimonials() {
             align: 'start',
             loop: true,
           }}
-          className="w-full max-w-5xl mx-auto"
+          className="mx-auto w-full max-w-5xl"
         >
           <CarouselContent>
             {testimonials.map((testimonial) => (
               <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/2">
-                <div className="h-full p-6 bg-muted/50 rounded-2xl">
-                  <Quote className="h-8 w-8 text-primary/20 mb-4" />
-                  
+                <div className="h-full rounded-2xl bg-muted/50 p-6">
+                  <Quote className="mb-4 h-8 w-8 text-primary/20" />
+
                   {/* Rating */}
-                  <div className="flex gap-1 mb-4">
+                  <div className="mb-4 flex gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -95,7 +93,7 @@ export function Testimonials() {
                   </div>
 
                   {/* Text */}
-                  <p className="text-foreground mb-6 leading-relaxed">
+                  <p className="mb-6 leading-relaxed text-foreground">
                     &ldquo;{testimonial.text}&rdquo;
                   </p>
 

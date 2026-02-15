@@ -13,7 +13,6 @@ export function FunnelHero() {
         fill
         className="object-cover"
         priority
-        quality={85}
       />
 
       {/* Overlay */}

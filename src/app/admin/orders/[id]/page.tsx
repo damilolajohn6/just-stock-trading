@@ -10,18 +10,21 @@ import { formatCurrency, formatDate } from '@/utils/format';
 export default async function AdminOrderDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = createAdminClient();
 
   const { data: order } = await supabase
     .from('orders')
-    .select(`
+    .select(
+      `
       *,
       user:profiles(*),
       items:order_items(*)
-    `)
-    .eq('id', params.id)
+    `
+    )
+    .eq('id', id)
     .single();
 
   if (!order) notFound();
@@ -38,9 +41,9 @@ export default async function AdminOrderDetailPage({
         <OrderActions orderId={order.id} currentStatus={order.status} />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle>Order Items</CardTitle>
@@ -48,18 +51,14 @@ export default async function AdminOrderDetailPage({
             <CardContent>
               <div className="space-y-4">
                 {order.items.map((item: any) => (
-                  <div key={item.id} className="flex justify-between items-center">
+                  <div key={item.id} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">
-                        {item.product_snapshot.name}
-                      </p>
+                      <p className="font-medium">{item.product_snapshot.name}</p>
                       <p className="text-sm text-muted-foreground">
                         Size: {item.product_snapshot.size} • Qty: {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium">
-                      {formatCurrency(item.total_price)}
-                    </p>
+                    <p className="font-medium">{formatCurrency(item.total_price)}</p>
                   </div>
                 ))}
                 <Separator />
@@ -81,13 +80,11 @@ export default async function AdminOrderDetailPage({
             <CardContent className="space-y-4">
               <div>
                 <p className="font-medium">{order.user?.full_name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {order.user?.email}
-                </p>
+                <p className="text-sm text-muted-foreground">{order.user?.email}</p>
               </div>
               <Separator />
               <div>
-                <p className="font-medium mb-1">Shipping Address</p>
+                <p className="mb-1 font-medium">Shipping Address</p>
                 <div className="text-sm text-muted-foreground">
                   <p>{shippingAddress.address_line1}</p>
                   <p>

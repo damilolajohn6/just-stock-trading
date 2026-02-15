@@ -17,10 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import {
-  WishlistItemCard,
-  EmptyWishlist,
-} from '@/components/features/wishlist';
+import { WishlistItemCard, EmptyWishlist } from '@/components/features/wishlist';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { useCart } from '@/hooks/use-cart';
 
@@ -47,7 +44,7 @@ export default function WishlistPage() {
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: 'My Thrift Factory Wishlist',
+        title: 'My Just Stock Trading Wishlist',
         text: `Check out my wishlist with ${items.length} items!`,
         url: window.location.href,
       });
@@ -70,19 +67,16 @@ export default function WishlistPage() {
     <Container className="py-8">
       <Breadcrumb items={[{ label: 'Wishlist' }]} className="mb-6" />
 
-      <PageHeader
-        title={`Wishlist (${items.length})`}
-        description="Items you've saved for later"
-      >
+      <PageHeader title={`Wishlist (${items.length})`} description="Items you've saved for later">
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleShare}>
-            <Share2 className="h-4 w-4 mr-2" />
+            <Share2 className="mr-2 h-4 w-4" />
             Share
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" size="sm" className="text-destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Clear all
               </Button>
             </AlertDialogTrigger>
@@ -90,22 +84,19 @@ export default function WishlistPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Clear your wishlist?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will remove all items from your wishlist. This action
-                  cannot be undone.
+                  This will remove all items from your wishlist. This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={clearWishlist}>
-                  Clear wishlist
-                </AlertDialogAction>
+                <AlertDialogAction onClick={clearWishlist}>Clear wishlist</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
       </PageHeader>
 
-      <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-4">
         {items.map((item) => (
           <WishlistItemCard
             key={item.id}

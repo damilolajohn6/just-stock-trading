@@ -12,34 +12,36 @@ import { createClient } from '@/lib/supabase/server';
 import { PageHeader } from '@/components/shared/page-header';
 
 interface CategoryPageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
+  const { slug } = await params;
   const supabase = await createClient();
   const { data: category } = await supabase
     .from('categories')
     .select('name, description')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (!category) return { title: 'Category Not Found' };
 
   return {
-    title: `${category.name} | Thrift Factory`,
+    title: `${category.name} | Just Stock Trading`,
     description: category.description,
   };
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const { slug } = await params;
   const supabase = await createClient();
 
   // 1. Fetch Category Info
   const { data: category } = await supabase
     .from('categories')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (!category) notFound();
@@ -48,12 +50,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   // Note: We're fetching server-side here for SEO, but client-side filtering will hydrate the state
   let query = supabase
     .from('products')
-    .select(`
+    .select(
+      `
       *,
       category:categories!inner(id, name, slug),
       images:product_images(url, alt_text, is_primary)
-    `)
-    .eq('category.slug', params.slug)
+    `
+    )
+    .eq('category.slug', slug)
     .eq('is_published', true)
     .order('created_at', { ascending: false })
     .limit(12); // Initial limit
@@ -61,24 +65,22 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { data: products } = await query;
 
   // Format products for display
-  const formattedProducts = products?.map((p: any) => ({
-    ...p,
-    image: p.images.find((img: any) => img.is_primary)?.url || p.images[0]?.url,
-  })) || [];
+  const formattedProducts =
+    products?.map((p: any) => ({
+      ...p,
+      image: p.images.find((img: any) => img.is_primary)?.url || p.images[0]?.url,
+    })) || [];
 
   return (
     <Container className="py-6">
       <Breadcrumb
-        items={[
-          { label: 'Categories', href: '/categories' },
-          { label: category.name },
-        ]}
+        items={[{ label: 'Categories', href: '/categories' }, { label: category.name }]}
         className="mb-4"
       />
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Sidebar Filters */}
-        <aside className="hidden lg:block w-64 flex-shrink-0">
+        <aside className="hidden w-64 flex-shrink-0 lg:block">
           <div className="sticky top-24">
             {/* Initialize filters with category constraint */}
             <ProductFilters />
@@ -86,12 +88,12 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <main className="min-w-0 flex-1">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold">{category.name}</h1>
               {category.description && (
-                <p className="text-muted-foreground mt-1">{category.description}</p>
+                <p className="mt-1 text-muted-foreground">{category.description}</p>
               )}
             </div>
             <div className="flex items-center gap-3">
@@ -105,7 +107,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           {formattedProducts.length > 0 ? (
             <ProductGrid products={formattedProducts} columns={4} />
           ) : (
-            <div className="text-center py-16 bg-muted/30 rounded-lg">
+            <div className="rounded-lg bg-muted/30 py-16 text-center">
               <p className="text-muted-foreground">No products found in this category.</p>
             </div>
           )}

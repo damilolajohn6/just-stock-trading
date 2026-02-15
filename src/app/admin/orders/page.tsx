@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
+import Link from 'next/link';
+import { createAdminClient } from '@/lib/supabase/admin';
 import {
   Table,
   TableBody,
@@ -7,28 +7,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/shared/page-header";
-import { formatCurrency, formatDate } from "@/utils/format";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/page-header';
+import { formatCurrency, formatDate } from '@/utils/format';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: { status?: string };
+  searchParams: Promise<{ status?: string }>;
 }) {
   const supabase = createAdminClient();
-  const status = searchParams.status || "all";
+  const { status: statusParam } = await searchParams;
+  const status = statusParam || 'all';
 
   let query = supabase
-    .from("orders")
-    .select("*, user:profiles(email, full_name)")
-    .order("created_at", { ascending: false });
+    .from('orders')
+    .select('*, user:profiles(email, full_name)')
+    .order('created_at', { ascending: false });
 
-  if (status !== "all") {
-    query = query.eq("status", status as any);
+  if (status !== 'all') {
+    query = query.eq('status', status as any);
   }
 
   const { data: orders } = await query;
@@ -57,7 +58,7 @@ export default async function AdminOrdersPage({
         </TabsList>
       </Tabs>
 
-      <div className="border rounded-lg">
+      <div className="rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -73,17 +74,11 @@ export default async function AdminOrdersPage({
           <TableBody>
             {orders?.map((order) => (
               <TableRow key={order.id}>
-                <TableCell className="font-medium">
-                  {order.order_number}
-                </TableCell>
+                <TableCell className="font-medium">{order.order_number}</TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-medium">
-                      {order.user?.full_name || "Guest"}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {order.user?.email}
-                    </span>
+                    <span className="font-medium">{order.user?.full_name || 'Guest'}</span>
+                    <span className="text-xs text-muted-foreground">{order.user?.email}</span>
                   </div>
                 </TableCell>
                 <TableCell>{formatDate(order.created_at)}</TableCell>
@@ -94,17 +89,13 @@ export default async function AdminOrdersPage({
                 </TableCell>
                 <TableCell>
                   <Badge
-                    variant={
-                      order.payment_status === "paid" ? "success" : "secondary"
-                    }
+                    variant={order.payment_status === 'paid' ? 'success' : 'secondary'}
                     className="capitalize"
                   >
                     {order.payment_status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(order.total)}
-                </TableCell>
+                <TableCell className="text-right">{formatCurrency(order.total)}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" asChild>
                     <Link href={`/admin/orders/${order.id}`}>View</Link>
@@ -114,7 +105,7 @@ export default async function AdminOrdersPage({
             ))}
             {orders?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center h-24">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No orders found.
                 </TableCell>
               </TableRow>

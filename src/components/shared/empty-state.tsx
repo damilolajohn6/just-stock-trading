@@ -1,55 +1,60 @@
-import { cn } from '@/utils/cn';
-import { LucideIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import Link from "next/link";
+import { PackageSearch, SearchX, ShoppingBag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/utils/cn";
 
 interface EmptyStateProps {
-  icon?: LucideIcon;
-  title: string;
+  type?: "search" | "cart" | "orders" | "default";
+  title?: string;
   description?: string;
-  actionLabel?: string;
   actionHref?: string;
+  actionLabel?: string;
   onAction?: () => void;
+  icon?: React.ElementType;
   className?: string;
 }
 
+const ICONS = {
+  search: SearchX,
+  cart: ShoppingBag,
+  orders: PackageSearch,
+  default: PackageSearch,
+};
+
 export function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  actionLabel,
+  type = "default",
+  title = "Nothing here yet",
+  description = "We couldn't find what you're looking for.",
   actionHref,
+  actionLabel,
   onAction,
+  icon: CustomIcon,
   className,
 }: EmptyStateProps) {
+  const Icon = CustomIcon || ICONS[type];
+
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center py-12 text-center',
-        className
+        "flex flex-col items-center justify-center py-16 text-center animate-fade-in",
+        className,
       )}
     >
-      {Icon && (
-        <div className="mb-4 rounded-full bg-muted p-4">
-          <Icon className="h-8 w-8 text-muted-foreground" />
-        </div>
-      )}
-      <h3 className="text-lg font-semibold">{title}</h3>
-      {description && (
-        <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          {description}
-        </p>
-      )}
-      {(actionLabel && actionHref) || onAction ? (
-        <div className="mt-4">
-          {actionHref ? (
-            <Button asChild>
-              <Link href={actionHref}>{actionLabel}</Link>
-            </Button>
-          ) : (
-            <Button onClick={onAction}>{actionLabel}</Button>
-          )}
-        </div>
+      <div className="rounded-full bg-muted p-6 mb-6">
+        <Icon className="h-12 w-12 text-muted-foreground opacity-50" />
+      </div>
+      <h3 className="text-xl font-bold tracking-tight mb-2">{title}</h3>
+      <p className="text-muted-foreground max-w-sm mb-8 text-sm leading-relaxed">
+        {description}
+      </p>
+      {onAction ? (
+        <Button onClick={onAction} size="lg">
+          {actionLabel || "Go Back"}
+        </Button>
+      ) : actionHref ? (
+        <Button asChild size="lg">
+          <Link href={actionHref}>{actionLabel || "Go Back"}</Link>
+        </Button>
       ) : null}
     </div>
   );

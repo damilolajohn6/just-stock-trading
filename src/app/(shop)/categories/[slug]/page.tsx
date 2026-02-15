@@ -8,67 +8,23 @@ import {
   ActiveFilters,
   ProductSort,
 } from '@/components/features/products';
-
-// Mock category data
-const categories: Record<string, { name: string; description: string }> = {
-  women: { name: 'Women', description: 'Pre-loved fashion for women' },
-  men: { name: 'Men', description: 'Quality second-hand menswear' },
-  vintage: { name: 'Vintage', description: 'Curated vintage pieces from all eras' },
-  accessories: { name: 'Accessories', description: 'Bags, jewelry, hats and more' },
-  footwear: { name: 'Footwear', description: 'Pre-loved shoes and boots' },
-  kids: { name: 'Kids', description: 'Quality second-hand children clothing' },
-};
-
-// Mock products
-const mockProducts = [
-  {
-    id: '1',
-    name: 'Vintage Levi\'s 501 Jeans',
-    slug: 'vintage-levis-501-jeans',
-    price: 45,
-    compareAtPrice: 65,
-    condition: 'like_new' as const,
-    brand: 'Levi\'s',
-    image: 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?w=600&q=80',
-  },
-  {
-    id: '2',
-    name: '90s Champion Hoodie',
-    slug: '90s-champion-hoodie-navy',
-    price: 48,
-    condition: 'good' as const,
-    brand: 'Champion',
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80',
-  },
-  {
-    id: '3',
-    name: 'Vintage Denim Jacket',
-    slug: 'vintage-denim-jacket',
-    price: 55,
-    condition: 'good' as const,
-    brand: 'Levi\'s',
-    image: 'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=600&q=80',
-  },
-  {
-    id: '4',
-    name: 'Vintage Band Tee',
-    slug: 'vintage-band-tee',
-    price: 35,
-    condition: 'good' as const,
-    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80',
-  },
-];
+import { createClient } from '@/lib/supabase/server';
+import { PageHeader } from '@/components/shared/page-header';
 
 interface CategoryPageProps {
   params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
-  const category = categories[params.slug];
+  const supabase = await createClient();
+  const { data: category } = await supabase
+    .from('categories')
+    .select('name, description')
+    .eq('slug', params.slug)
+    .single();
 
-  if (!category) {
-    return { title: 'Category Not Found' };
-  }
+  if (!category) return { title: 'Category Not Found' };
 
   return {
     title: `${category.name} | Thrift Factory`,
@@ -76,12 +32,39 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const category = categories[params.slug];
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const supabase = await createClient();
 
-  if (!category) {
-    notFound();
-  }
+  // 1. Fetch Category Info
+  const { data: category } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('slug', params.slug)
+    .single();
+
+  if (!category) notFound();
+
+  // 2. Fetch Products for this Category
+  // Note: We're fetching server-side here for SEO, but client-side filtering will hydrate the state
+  let query = supabase
+    .from('products')
+    .select(`
+      *,
+      category:categories!inner(id, name, slug),
+      images:product_images(url, alt_text, is_primary)
+    `)
+    .eq('category.slug', params.slug)
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(12); // Initial limit
+
+  const { data: products } = await query;
+
+  // Format products for display
+  const formattedProducts = products?.map((p: any) => ({
+    ...p,
+    image: p.images.find((img: any) => img.is_primary)?.url || p.images[0]?.url,
+  })) || [];
 
   return (
     <Container className="py-6">
@@ -97,6 +80,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {/* Sidebar Filters */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-24">
+            {/* Initialize filters with category constraint */}
             <ProductFilters />
           </div>
         </aside>
@@ -106,7 +90,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold">{category.name}</h1>
-              <p className="text-muted-foreground">{category.description}</p>
+              {category.description && (
+                <p className="text-muted-foreground mt-1">{category.description}</p>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <MobileFilterDrawer />
@@ -116,7 +102,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
           <ActiveFilters />
 
-          <ProductGrid products={mockProducts} columns={4} />
+          {formattedProducts.length > 0 ? (
+            <ProductGrid products={formattedProducts} columns={4} />
+          ) : (
+            <div className="text-center py-16 bg-muted/30 rounded-lg">
+              <p className="text-muted-foreground">No products found in this category.</p>
+            </div>
+          )}
         </main>
       </div>
     </Container>

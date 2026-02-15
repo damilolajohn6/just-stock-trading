@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { createClient } from '@/lib/supabase/server';
 import { Container } from '@/components/shared/container';
 import { PageHeader } from '@/components/shared/page-header';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
@@ -10,144 +11,159 @@ import {
   ProductSort,
 } from '@/components/features/products';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/shared/empty-state';
+import { Pagination } from '@/components/shared/pagination'; 
 
-// Mock products data - replace with actual data fetching
-const products = [
-  {
-    id: '1',
-    name: 'Vintage Levi\'s 501 Jeans',
-    slug: 'vintage-levis-501-jeans',
-    price: 45,
-    compareAtPrice: 65,
-    condition: 'like_new' as const,
-    brand: 'Levi\'s',
-    image: 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?w=600&q=80',
-    isNew: true,
-  },
-  {
-    id: '2',
-    name: 'Floral Midi Dress',
-    slug: 'floral-midi-dress',
-    price: 28,
-    condition: 'good' as const,
-    brand: 'Zara',
-    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80',
-    isTrending: true,
-  },
-  {
-    id: '3',
-    name: 'Wool Overcoat',
-    slug: 'wool-overcoat-charcoal',
-    price: 75,
-    compareAtPrice: 120,
-    condition: 'like_new' as const,
-    brand: 'Uniqlo',
-    image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=600&q=80',
-  },
-  {
-    id: '4',
-    name: 'Leather Crossbody Bag',
-    slug: 'leather-crossbody-bag-tan',
-    price: 55,
-    compareAtPrice: 150,
-    condition: 'good' as const,
-    brand: 'Coach',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80',
-  },
-  {
-    id: '5',
-    name: 'Cashmere Sweater',
-    slug: 'cashmere-sweater-burgundy',
-    price: 65,
-    compareAtPrice: 180,
-    condition: 'like_new' as const,
-    brand: 'J.Crew',
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80',
-    isNew: true,
-  },
-  {
-    id: '6',
-    name: '90s Champion Hoodie',
-    slug: '90s-champion-hoodie-navy',
-    price: 48,
-    condition: 'good' as const,
-    brand: 'Champion',
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80',
-    isTrending: true,
-  },
-  {
-    id: '7',
-    name: 'Silk Blouse',
-    slug: 'silk-blouse-cream',
-    price: 42,
-    compareAtPrice: 200,
-    condition: 'like_new' as const,
-    brand: 'Equipment',
-    image: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=600&q=80',
-  },
-  {
-    id: '8',
-    name: 'Nike Air Max 90',
-    slug: 'nike-air-max-90-white',
-    price: 40,
-    compareAtPrice: 90,
-    condition: 'good' as const,
-    brand: 'Nike',
-    image: 'https://images.unsplash.com/photo-1514989940723-e8e51d675571?w=600&q=80',
-  },
-  {
-    id: '9',
-    name: 'Vintage Denim Jacket',
-    slug: 'vintage-denim-jacket',
-    price: 55,
-    condition: 'good' as const,
-    brand: 'Levi\'s',
-    image: 'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=600&q=80',
-  },
-  {
-    id: '10',
-    name: 'Corduroy Trousers',
-    slug: 'corduroy-trousers-tan',
-    price: 35,
-    condition: 'like_new' as const,
-    brand: 'Uniqlo',
-    image: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&q=80',
-  },
-  {
-    id: '11',
-    name: 'Knit Cardigan',
-    slug: 'knit-cardigan-cream',
-    price: 38,
-    condition: 'good' as const,
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80',
-  },
-  {
-    id: '12',
-    name: 'Canvas Tote Bag',
-    slug: 'canvas-tote-bag',
-    price: 18,
-    condition: 'like_new' as const,
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80',
-  },
-];
+// Force dynamic rendering because this page depends on searchParams
+export const dynamic = 'force-dynamic';
 
+interface ProductsPageProps {
+  searchParams: {
+    category?: string;
+    sort?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    sizes?: string | string[];
+    brands?: string | string[];
+    conditions?: string | string[];
+    colors?: string | string[];
+    page?: string;
+    search?: string;
+  };
+}
+
+// Data fetching function
+async function getProducts(params: ProductsPageProps['searchParams']) {
+  const supabase = await createClient();
+  
+  const page = parseInt(params.page || '1');
+  const limit = 12;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  // Start building the query
+  let query = supabase
+    .from('products')
+    .select(`
+      *,
+      category:categories!inner(id, name, slug),
+      images:product_images(url, alt_text, is_primary),
+      variants:product_variants(size, color, stock_quantity, is_available)
+    `, { count: 'exact' })
+    .eq('is_published', true);
+
+  // Apply filters
+  if (params.category) {
+    query = query.eq('category.slug', params.category);
+  }
+
+  if (params.minPrice) {
+    query = query.gte('price', parseFloat(params.minPrice));
+  }
+
+  if (params.maxPrice) {
+    query = query.lte('price', parseFloat(params.maxPrice));
+  }
+
+  if (params.brands) {
+    const brands = Array.isArray(params.brands) ? params.brands : [params.brands];
+    if (brands.length > 0) query = query.in('brand', brands);
+  }
+
+  if (params.conditions) {
+    const conditions = Array.isArray(params.conditions) ? params.conditions : [params.conditions];
+    if (conditions.length > 0) query = query.in('condition', conditions as any);
+  }
+  
+  if (params.colors) {
+    const colors = Array.isArray(params.colors) ? params.colors : [params.colors];
+    if (colors.length > 0) query = query.in('color', colors);
+  }
+
+  if (params.search) {
+    const searchTerm = params.search;
+    query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%`);
+  }
+
+  // Sorting
+  switch (params.sort) {
+    case 'price_asc':
+      query = query.order('price', { ascending: true });
+      break;
+    case 'price_desc':
+      query = query.order('price', { ascending: false });
+      break;
+    case 'popular':
+      query = query.order('view_count', { ascending: false });
+      break;
+    case 'name':
+      query = query.order('name', { ascending: true });
+      break;
+    case 'newest':
+    default:
+      query = query.order('created_at', { ascending: false });
+      break;
+  }
+
+  // Pagination
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    console.error('Error fetching products:', error);
+    return { products: [], total: 0, totalPages: 0 };
+  }
+
+  // Format products for the grid component
+  const formattedProducts = data.map((product: any) => ({
+    ...product,
+    // Ensure images are sorted by primary first
+    images: product.images?.sort((a: any, b: any) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)) || [],
+    image: product.images?.find((img: any) => img.is_primary)?.url || product.images?.[0]?.url || null,
+    // Add computed fields if needed
+    isNew: new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Created within last 7 days
+  }));
+
+  return {
+    products: formattedProducts,
+    total: count || 0,
+    totalPages: Math.ceil((count || 0) / limit),
+  };
+}
+
+// Skeleton loader
 function ProductGridSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="space-y-3">
           <Skeleton className="aspect-[3/4] rounded-lg" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="h-5 w-1/4" />
+          <div className="space-y-1">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-5 w-1/4" />
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-export default function ProductsPage() {
-  const totalProducts = products.length;
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  // Fetch data
+  const { products, total, totalPages } = await getProducts(searchParams);
+  
+  // Fetch available brands for filter (could be cached/optimized)
+  const supabase = await createClient();
+  const { data: brandData } = await supabase
+    .from('products')
+    .select('brand')
+    .not('brand', 'is', null)
+    .eq('is_published', true);
+    
+  // Get unique brands
+  const uniqueBrands = Array.from(new Set(brandData?.map((p) => p.brand).filter(Boolean) as string[])).sort();
 
   return (
     <Container className="py-6">
@@ -160,7 +176,7 @@ export default function ProductsPage() {
         {/* Sidebar Filters - Desktop */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-24">
-            <ProductFilters />
+            <ProductFilters availableBrands={uniqueBrands} />
           </div>
         </aside>
 
@@ -171,7 +187,7 @@ export default function ProductsPage() {
             <div>
               <h1 className="text-2xl font-bold">All Products</h1>
               <p className="text-muted-foreground">
-                {totalProducts} products found
+                {total} {total === 1 ? 'product' : 'products'} found
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -185,15 +201,29 @@ export default function ProductsPage() {
 
           {/* Products Grid */}
           <Suspense fallback={<ProductGridSkeleton />}>
-            <ProductGrid products={products} columns={4} />
+            {products.length > 0 ? (
+              <>
+                <ProductGrid products={products} columns={4} />
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex justify-center">
+                    <Pagination 
+                      currentPage={parseInt(searchParams.page || '1')} 
+                      totalPages={totalPages} 
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <EmptyState 
+                title="No products found"
+                description="Try adjusting your filters or search criteria."
+                actionLabel="Clear Filters"
+                actionHref="/products"
+              />
+            )}
           </Suspense>
-
-          {/* Pagination placeholder */}
-          <div className="mt-12 flex justify-center">
-            <p className="text-sm text-muted-foreground">
-              Showing {totalProducts} of {totalProducts} products
-            </p>
-          </div>
         </main>
       </div>
     </Container>

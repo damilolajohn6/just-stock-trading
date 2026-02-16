@@ -2,15 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  Heart,
-  Share2,
-  Truck,
-  RotateCcw,
-  ShieldCheck,
-  Ruler,
-  Check,
-} from 'lucide-react';
+import { Heart, Share2, Truck, RotateCcw, ShieldCheck, Ruler, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -82,6 +74,7 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
       productId: product.id,
       variantId: selectedVariant?.id || null,
       name: product.name,
+      slug: product.slug,
       price: currentPrice,
       quantity,
       image: primaryImage,
@@ -128,23 +121,15 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
       </div>
 
       {/* Title */}
-      <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">{product.name}</h1>
 
       {/* Rating */}
       {product.average_rating !== undefined && (
-        <Rating
-          value={product.average_rating}
-          reviewCount={product.review_count}
-          showValue
-        />
+        <Rating value={product.average_rating} reviewCount={product.review_count} showValue />
       )}
 
       {/* Price */}
-      <PriceDisplay
-        price={currentPrice}
-        compareAtPrice={product.compare_at_price}
-        size="lg"
-      />
+      <PriceDisplay price={currentPrice} compareAtPrice={product.compare_at_price} size="lg" />
 
       {/* Short description */}
       {product.short_description && (
@@ -161,7 +146,7 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-auto p-0">
-                  <Ruler className="h-4 w-4 mr-1" />
+                  <Ruler className="mr-1 h-4 w-4" />
                   Size Guide
                 </Button>
               </DialogTrigger>
@@ -179,12 +164,36 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b"><td className="py-2">XS</td><td>32-34</td><td>26-28</td></tr>
-                      <tr className="border-b"><td className="py-2">S</td><td>34-36</td><td>28-30</td></tr>
-                      <tr className="border-b"><td className="py-2">M</td><td>38-40</td><td>32-34</td></tr>
-                      <tr className="border-b"><td className="py-2">L</td><td>42-44</td><td>36-38</td></tr>
-                      <tr className="border-b"><td className="py-2">XL</td><td>46-48</td><td>40-42</td></tr>
-                      <tr><td className="py-2">XXL</td><td>50-52</td><td>44-46</td></tr>
+                      <tr className="border-b">
+                        <td className="py-2">XS</td>
+                        <td>32-34</td>
+                        <td>26-28</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2">S</td>
+                        <td>34-36</td>
+                        <td>28-30</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2">M</td>
+                        <td>38-40</td>
+                        <td>32-34</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2">L</td>
+                        <td>42-44</td>
+                        <td>36-38</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2">XL</td>
+                        <td>46-48</td>
+                        <td>40-42</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2">XXL</td>
+                        <td>50-52</td>
+                        <td>44-46</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -194,7 +203,8 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
           <div className="flex flex-wrap gap-2">
             {sizes.map((size) => {
               const variant = product.variants.find(
-                (v) => v.size === size && (colors.length === 0 || v.color === selectedVariant?.color)
+                (v) =>
+                  v.size === size && (colors.length === 0 || v.color === selectedVariant?.color)
               );
               const available = variant?.is_available && (variant?.stock_quantity || 0) > 0;
 
@@ -204,12 +214,12 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
                   onClick={() => variant && setSelectedVariant(variant)}
                   disabled={!available}
                   className={cn(
-                    'min-w-[3rem] px-4 py-2 text-sm border rounded-md transition-colors',
+                    'min-w-[3rem] rounded-md border px-4 py-2 text-sm transition-colors',
                     selectedVariant?.size === size
                       ? 'border-primary bg-primary text-primary-foreground'
                       : available
-                      ? 'hover:border-primary'
-                      : 'opacity-50 cursor-not-allowed line-through'
+                        ? 'hover:border-primary'
+                        : 'cursor-not-allowed line-through opacity-50'
                   )}
                 >
                   {size}
@@ -239,12 +249,12 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
                   onClick={() => variant && setSelectedVariant(variant)}
                   disabled={!available}
                   className={cn(
-                    'px-4 py-2 text-sm border rounded-md transition-colors',
+                    'rounded-md border px-4 py-2 text-sm transition-colors',
                     selectedVariant?.color === color
                       ? 'border-primary bg-primary/10'
                       : available
-                      ? 'hover:border-primary'
-                      : 'opacity-50 cursor-not-allowed'
+                        ? 'hover:border-primary'
+                        : 'cursor-not-allowed opacity-50'
                   )}
                 >
                   {color}
@@ -271,43 +281,26 @@ export function ProductInfo({ product, primaryImage }: ProductInfoProps) {
       </div>
 
       {/* Quantity & Add to Cart */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
           max={stockQuantity}
           disabled={!isInStock}
         />
-        <Button
-          className="flex-1"
-          size="lg"
-          onClick={handleAddToCart}
-          disabled={!isInStock}
-        >
+        <Button className="flex-1" size="lg" onClick={handleAddToCart} disabled={!isInStock}>
           Add to Cart
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-11 w-11"
-          onClick={handleWishlist}
-        >
-          <Heart
-            className={cn('h-5 w-5', isWishlisted && 'fill-red-500 text-red-500')}
-          />
+        <Button variant="outline" size="icon" className="h-11 w-11" onClick={handleWishlist}>
+          <Heart className={cn('h-5 w-5', isWishlisted && 'fill-red-500 text-red-500')} />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-11 w-11"
-          onClick={handleShare}
-        >
+        <Button variant="outline" size="icon" className="h-11 w-11" onClick={handleShare}>
           <Share2 className="h-5 w-5" />
         </Button>
       </div>
 
       {/* Guarantees */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+      <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
         <div className="flex items-center gap-2 text-sm">
           <Truck className="h-5 w-5 text-muted-foreground" />
           <span>Free shipping over £500</span>

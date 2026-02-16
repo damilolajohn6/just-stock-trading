@@ -14,7 +14,9 @@ export interface CartActionResponse {
 // Get cart items for authenticated user
 export async function getCartItems(): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
@@ -22,7 +24,8 @@ export async function getCartItems(): Promise<CartActionResponse> {
 
   const { data, error } = await supabase
     .from('cart_items')
-    .select(`
+    .select(
+      `
       id,
       quantity,
       product:products (
@@ -41,7 +44,8 @@ export async function getCartItems(): Promise<CartActionResponse> {
         stock_quantity,
         price_adjustment
       )
-    `)
+    `
+    )
     .eq('user_id', user.id);
 
   if (error) {
@@ -70,7 +74,9 @@ export async function getCartItems(): Promise<CartActionResponse> {
 // Sync cart to database
 export async function syncCart(items: CartItem[]): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
@@ -108,20 +114,28 @@ export async function addToCart(
   quantity: number = 1
 ): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
   }
 
   // Check if item exists
-  const { data: existing } = await supabase
+  let query = supabase
     .from('cart_items')
     .select('id, quantity')
     .eq('user_id', user.id)
-    .eq('product_id', productId)
-    .eq('variant_id', variantId)
-    .single();
+    .eq('product_id', productId);
+
+  if (variantId) {
+    query = query.eq('variant_id', variantId);
+  } else {
+    query = query.is('variant_id', null);
+  }
+
+  const { data: existing } = await query.single();
 
   if (existing) {
     // Update quantity
@@ -157,7 +171,9 @@ export async function updateCartItemQuantity(
   quantity: number
 ): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
@@ -184,7 +200,9 @@ export async function updateCartItemQuantity(
 // Remove item from cart
 export async function removeFromCart(itemId: string): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
@@ -207,16 +225,15 @@ export async function removeFromCart(itemId: string): Promise<CartActionResponse
 // Clear cart
 export async function clearCart(): Promise<CartActionResponse> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return { success: false, error: 'Not authenticated' };
   }
 
-  const { error } = await supabase
-    .from('cart_items')
-    .delete()
-    .eq('user_id', user.id);
+  const { error } = await supabase.from('cart_items').delete().eq('user_id', user.id);
 
   if (error) {
     return { success: false, error: 'Failed to clear cart' };

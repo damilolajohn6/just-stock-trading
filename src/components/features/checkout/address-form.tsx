@@ -45,7 +45,7 @@ export function AddressForm({
     watch,
     formState: { errors },
   } = useForm<AddressFormData>({
-    resolver: zodResolver(addressSchema),
+    resolver: zodResolver(addressSchema) as any,
     defaultValues: {
       country: 'GB',
       ...defaultValues,

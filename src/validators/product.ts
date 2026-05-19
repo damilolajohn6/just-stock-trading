@@ -22,6 +22,7 @@ export const productSchema = z.object({
     color: z.string().optional(),
     stock_quantity: z.coerce.number().int().min(0),
     sku: z.string().optional(),
+    price_adjustment: z.coerce.number().default(0),
   })).min(1, 'At least one variant is required'),
 });
 

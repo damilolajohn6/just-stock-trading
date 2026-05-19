@@ -19,13 +19,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 import { FormField, SubmitButton } from "@/components/forms";
 import { ImageUploader } from "./image-uploader";
 
 import { productSchema, type ProductFormData } from "@/validators/product";
 import { createProduct, updateProduct } from "@/actions/products";
-import { CONDITION_OPTIONS, SIZE_OPTIONS } from "@/constants/filters";
+import { CONDITION_OPTIONS, CLOTHING_SIZES, KILO_SIZES } from "@/constants/filters";
 
 interface ProductFormProps {
   initialData?: any; // Replace with proper type
@@ -54,7 +56,7 @@ export function ProductForm({
       condition: "good",
       is_published: false,
       is_featured: false,
-      variants: [{ size: "M", stock_quantity: 1 }],
+      variants: [{ size: "M", stock_quantity: 1, price_adjustment: 0 }],
       images: [],
     }) as any,
   });
@@ -165,11 +167,22 @@ export function ProductForm({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {SIZE_OPTIONS.map((s) => (
-                          <SelectItem key={s.value} value={s.value}>
-                            {s.label}
-                          </SelectItem>
-                        ))}
+                        <SelectGroup>
+                          <SelectLabel>Clothing Sizes</SelectLabel>
+                          {CLOTHING_SIZES.map((s) => (
+                            <SelectItem key={s.value} value={s.value}>
+                              {s.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>Kilo Sales</SelectLabel>
+                          {KILO_SIZES.map((s) => (
+                            <SelectItem key={s.value} value={s.value}>
+                              {s.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
@@ -179,6 +192,16 @@ export function ProductForm({
                     <Input
                       type="number"
                       {...register(`variants.${index}.stock_quantity` as const)}
+                    />
+                  </div>
+
+                  <div className="w-28">
+                    <Label className="text-xs">Price Adj (£)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...register(`variants.${index}.price_adjustment` as const)}
                     />
                   </div>
 
@@ -202,7 +225,7 @@ export function ProductForm({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => append({ size: "", stock_quantity: 1 })}
+                onClick={() => append({ size: "", stock_quantity: 1, price_adjustment: 0 })}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Variant

@@ -1,5 +1,5 @@
 // Size options
-export const SIZE_OPTIONS = [
+export const CLOTHING_SIZES = [
   { value: 'XS', label: 'XS' },
   { value: 'S', label: 'S' },
   { value: 'M', label: 'M' },
@@ -9,6 +9,32 @@ export const SIZE_OPTIONS = [
   { value: 'XXXL', label: 'XXXL' },
   { value: 'One Size', label: 'One Size' },
 ] as const;
+
+export const KILO_SIZES = [
+  { value: '1kg', label: '1kg' },
+  { value: '2kg', label: '2kg' },
+  { value: '3kg', label: '3kg' },
+  { value: '4kg', label: '4kg' },
+  { value: '5kg', label: '5kg' },
+  { value: '10kg', label: '10kg' },
+  { value: '15kg', label: '15kg' },
+  { value: '20kg', label: '20kg' },
+  { value: '25kg', label: '25kg' },
+  { value: '50kg', label: '50kg' },
+  { value: '75kg', label: '75kg' },
+  { value: '100kg', label: '100kg' },
+  { value: '150kg', label: '150kg' },
+  { value: '200kg', label: '200kg' },
+  { value: '250kg', label: '250kg' },
+  { value: '300kg', label: '300kg' },
+  { value: '350kg', label: '350kg' },
+  { value: '400kg', label: '400kg' },
+  { value: '450kg', label: '450kg' },
+  { value: '500kg', label: '500kg' },
+  { value: 'Custom', label: 'Custom' },
+] as const;
+
+export const SIZE_OPTIONS = [...CLOTHING_SIZES, ...KILO_SIZES] as const;
 
 // Condition options
 export const CONDITION_OPTIONS = [

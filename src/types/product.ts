@@ -103,7 +103,37 @@ export interface ProductVariantInput {
 }
 
 // Sizes constant
-export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'One Size'] as const;
+export const SIZES = [
+  'XS',
+  'S',
+  'M',
+  'L',
+  'XL',
+  'XXL',
+  'XXXL',
+  'One Size',
+  '1kg',
+  '2kg',
+  '3kg',
+  '4kg',
+  '5kg',
+  '10kg',
+  '15kg',
+  '20kg',
+  '25kg',
+  '50kg',
+  '75kg',
+  '100kg',
+  '150kg',
+  '200kg',
+  '250kg',
+  '300kg',
+  '350kg',
+  '400kg',
+  '450kg',
+  '500kg',
+  'Custom',
+] as const;
 export type Size = typeof SIZES[number];
 
 // Conditions constant

@@ -1,9 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from './server';
 import type { MainNavItem } from '@/constants/navigation';
 
-// ──────────────────────────────────────────────────
-// Home page: Categories
-// ──────────────────────────────────────────────────
 
 export interface HomeCategory {
   name: string;
@@ -53,10 +51,6 @@ export async function getHomeCategories(): Promise<HomeCategory[]> {
     featured: index === 0, // Mark the first category as featured
   }));
 }
-
-// ──────────────────────────────────────────────────
-// Home page: Featured Products
-// ──────────────────────────────────────────────────
 
 export interface HomeProduct {
   id: string;

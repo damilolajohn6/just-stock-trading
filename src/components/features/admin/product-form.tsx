@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import slugify from "slugify";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -49,7 +50,7 @@ export function ProductForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as any,
     defaultValues: (initialData || {
@@ -65,6 +66,19 @@ export function ProductForm({
     control,
     name: "variants",
   });
+
+  const name = watch("name");
+
+  useEffect(() => {
+    if (!isEdit && name && !dirtyFields.slug) {
+      const generatedSlug = slugify(name, {
+        lower: true,
+        strict: true,
+        trim: true,
+      });
+      setValue("slug", generatedSlug, { shouldValidate: true });
+    }
+  }, [name, isEdit, setValue, dirtyFields.slug]);
 
   const images = watch("images");
 

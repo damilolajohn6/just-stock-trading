@@ -10,6 +10,12 @@ import {
   Settings,
   LogOut,
   Shield,
+  BadgeCheck,
+  BadgeAlert,
+  ShieldCheck,
+  Clock,
+  AlertTriangle,
+  Fingerprint,
 } from 'lucide-react';
 
 import { useAuthContext } from '@/components/providers/auth-provider';
@@ -25,18 +31,29 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { getInitials } from '@/utils/helpers';
 
 export function UserMenu() {
   const router = useRouter();
-  const { user, profile, isLoading, isAuthenticated, isAdmin, signOut } = useAuthContext();
+  const {
+    user,
+    profile,
+    isLoading,
+    isAuthenticated,
+    isAdmin,
+    emailVerified,
+    hasMfa,
+    lastSignIn,
+    sessionExpiresAt,
+    signOut,
+    checkBlockStatus,
+  } = useAuthContext();
 
-  // Loading state
   if (isLoading) {
     return <Skeleton className="h-8 w-8 rounded-full" />;
   }
 
-  // Not authenticated
   if (!isAuthenticated || !user) {
     return (
       <div className="flex items-center gap-2">
@@ -54,9 +71,33 @@ export function UserMenu() {
   const initials = getInitials(displayName);
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url;
 
+  const sessionExpiresAtDate = sessionExpiresAt ? new Date(sessionExpiresAt) : null;
+  const sessionExpiringSoon = sessionExpiresAtDate && (sessionExpiresAtDate.getTime() - Date.now()) < 600_000;
+
   const handleSignOut = async () => {
     await signOut();
     router.push('/');
+  };
+
+  const handleSignOutAll = async () => {
+    await signOut();
+    router.push('/');
+  };
+
+  const formatLastSignIn = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
   return (
@@ -69,18 +110,83 @@ export function UserMenu() {
               {initials}
             </AvatarFallback>
           </Avatar>
+          {!emailVerified && (
+            <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-destructive" />
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-64" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{displayName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium leading-none truncate">{displayName}</p>
+              {emailVerified ? (
+                <BadgeCheck className="h-4 w-4 flex-shrink-0 text-primary" />
+              ) : (
+                <BadgeAlert className="h-4 w-4 flex-shrink-0 text-destructive" />
+              )}
+            </div>
+            <p className="text-xs leading-none text-muted-foreground truncate">
               {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
+
         <DropdownMenuSeparator />
+
+        {/* Security badges */}
+        <div className="px-3 py-2">
+          <div className="flex flex-wrap gap-1.5">
+            {emailVerified ? (
+              <Badge variant="success" className="gap-1 text-[10px] px-1.5 py-0">
+                <BadgeCheck className="h-3 w-3" />
+                Verified
+              </Badge>
+            ) : (
+              <Badge variant="warning" className="gap-1 text-[10px] px-1.5 py-0">
+                <BadgeAlert className="h-3 w-3" />
+                Unverified
+              </Badge>
+            )}
+            {hasMfa && (
+              <Badge variant="default" className="gap-1 text-[10px] px-1.5 py-0">
+                <ShieldCheck className="h-3 w-3" />
+                2FA
+              </Badge>
+            )}
+            {isAdmin && (
+              <Badge variant="default" className="gap-1 text-[10px] px-1.5 py-0">
+                <Shield className="h-3 w-3" />
+                Admin
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Session expiry warning */}
+        {sessionExpiringSoon && (
+          <div className="px-3 pb-2">
+            <div className="flex items-center gap-1.5 rounded-md bg-warning/10 px-2 py-1.5 text-xs text-warning">
+              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+              <span>Session expiring soon</span>
+            </div>
+          </div>
+        )}
+
+        {lastSignIn && (
+          <div className="px-3 pb-2">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>Last login: {formatLastSignIn(lastSignIn)}</span>
+            </div>
+          </div>
+        )}
+
+        <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/account" className="cursor-pointer">
@@ -113,7 +219,19 @@ export function UserMenu() {
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        
+
+        {!hasMfa && isAuthenticated && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/account/settings#security" className="cursor-pointer">
+                <Fingerprint className="mr-2 h-4 w-4" />
+                <span>Enable Two-Factor Auth</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+
         {isAdmin && (
           <>
             <DropdownMenuSeparator />
@@ -125,7 +243,7 @@ export function UserMenu() {
             </DropdownMenuItem>
           </>
         )}
-        
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer text-destructive focus:text-destructive"
@@ -133,6 +251,13 @@ export function UserMenu() {
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer text-destructive/80 focus:text-destructive/80 text-xs"
+          onClick={handleSignOutAll}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign out of all devices</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

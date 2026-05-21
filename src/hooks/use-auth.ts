@@ -1,40 +1,54 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
-import type { User, Session } from '@supabase/supabase-js';
-import type { Profile } from '@/types/user';
+import { getClient } from '@/lib/supabase/client';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import type { Profile, UseAuthReturn } from '@/types/user';
+
+type User = SupabaseUser;
 
 interface AuthState {
-  user: User | null;
+  user: SupabaseUser | null;
   profile: Profile | null;
   session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  emailVerified: boolean;
+  hasMfa: boolean;
+  isBlocked: boolean;
+  lastSignIn: string | null;
+  sessionExpiresAt: string | null;
 }
 
-interface UseAuthReturn extends AuthState {
-  signOut: () => Promise<void>;
-  refreshSession: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
-}
+const INITIAL_STATE: AuthState = {
+  user: null,
+  profile: null,
+  session: null,
+  isLoading: true,
+  isAuthenticated: false,
+  isAdmin: false,
+  emailVerified: false,
+  hasMfa: false,
+  isBlocked: false,
+  lastSignIn: null,
+  sessionExpiresAt: null,
+};
+
+const BLOCK_CHECK_INTERVAL = 120_000;
+const SESSION_HEALTH_INTERVAL = 300_000;
 
 export function useAuth(): UseAuthReturn {
   const router = useRouter();
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    profile: null,
-    session: null,
-    isLoading: true,
-    isAuthenticated: false,
-    isAdmin: false,
-  });
+  const [state, setState] = useState<AuthState>(INITIAL_STATE);
+  const supabase = getClient();
+  const userRef = useRef(state.user);
+  const blockIntervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const sessionIntervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
-  const supabase = createClient();
+  userRef.current = state.user;
 
-  // Fetch user profile
   const fetchProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -48,62 +62,113 @@ export function useAuth(): UseAuthReturn {
     }
 
     return data as Profile;
-  }, [supabase]);
+  }, []);
 
-  // Refresh profile data
+  const buildAuthState = useCallback(async (
+    session: Session | null,
+    profile: Profile | null,
+    loading = false,
+  ): Promise<AuthState> => {
+    const user = session?.user ?? null;
+    const emailVerified = user?.email_confirmed_at ? true : profile?.email_verified ?? false;
+
+    let hasMfa = false;
+    if (user) {
+      try {
+        const { data: factors } = await supabase.auth.mfa.listFactors();
+        hasMfa = (factors?.all ?? []).some((f: any) => f.status === 'verified' || f.verified === true);
+      } catch {
+        hasMfa = false;
+      }
+    }
+
+    const expiresAt = session?.expires_at
+      ? new Date(session.expires_at * 1000).toISOString()
+      : null;
+
+    const lastSignIn = user?.last_sign_in_at ?? null;
+
+    return {
+      user,
+      profile,
+      session,
+      isLoading: loading,
+      isAuthenticated: !!user,
+      isAdmin: profile?.role === 'admin',
+      emailVerified,
+      hasMfa,
+      isBlocked: profile?.is_blocked ?? false,
+      lastSignIn,
+      sessionExpiresAt: expiresAt,
+    };
+  }, []);
+
   const refreshProfile = useCallback(async () => {
-    if (!state.user) return;
+    const currentUser = userRef.current;
+    if (!currentUser) return;
 
-    const profile = await fetchProfile(state.user.id);
-    
+    const profile = await fetchProfile(currentUser.id);
     setState((prev) => ({
       ...prev,
       profile,
       isAdmin: profile?.role === 'admin',
+      emailVerified: profile?.email_verified ?? prev.emailVerified,
+      isBlocked: profile?.is_blocked ?? false,
     }));
-  }, [state.user, fetchProfile]);
+  }, [fetchProfile]);
 
-  // Refresh session
-  const refreshSession = useCallback(async () => {
-    const { data: { session }, error } = await supabase.auth.refreshSession();
-    
-    if (error) {
-      console.error('Error refreshing session:', error);
-      return;
+  const checkBlockStatus = useCallback(async () => {
+    const currentUser = userRef.current;
+    if (!currentUser) return false;
+
+    const profile = await fetchProfile(currentUser.id);
+    if (profile?.is_blocked) {
+      await supabase.auth.signOut();
+      setState({ ...INITIAL_STATE, isLoading: false });
+      router.push('/login?error=account_suspended');
+      return true;
     }
+
+    setState((prev) => ({ ...prev, isBlocked: false }));
+    return false;
+  }, [fetchProfile, supabase, router]);
+
+  const checkSession = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
 
     if (session?.user) {
       const profile = await fetchProfile(session.user.id);
-      
-      setState({
-        user: session.user,
-        profile,
-        session,
-        isLoading: false,
-        isAuthenticated: true,
-        isAdmin: profile?.role === 'admin',
-      });
+      const newState = await buildAuthState(session, profile);
+      setState(newState);
+      return true;
     }
-  }, [supabase, fetchProfile]);
 
-  // Sign out
+    setState({ ...INITIAL_STATE, isLoading: false });
+    return false;
+  }, [fetchProfile, buildAuthState]);
+
+  const refreshSession = useCallback(async () => {
+    const { data: { session }, error } = await supabase.auth.refreshSession();
+
+    if (error || !session?.user) {
+      setState({ ...INITIAL_STATE, isLoading: false });
+      return;
+    }
+
+    const profile = await fetchProfile(session.user.id);
+    const newState = await buildAuthState(session, profile);
+    setState(newState);
+  }, [supabase, fetchProfile, buildAuthState]);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    
-    setState({
-      user: null,
-      profile: null,
-      session: null,
-      isLoading: false,
-      isAuthenticated: false,
-      isAdmin: false,
-    });
+
+    setState({ ...INITIAL_STATE, isLoading: false });
 
     router.push('/');
     router.refresh();
   }, [supabase, router]);
 
-  // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -111,24 +176,10 @@ export function useAuth(): UseAuthReturn {
 
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
-
-          setState({
-            user: session.user,
-            profile,
-            session,
-            isLoading: false,
-            isAuthenticated: true,
-            isAdmin: profile?.role === 'admin',
-          });
+          const newState = await buildAuthState(session, profile);
+          setState(newState);
         } else {
-          setState({
-            user: null,
-            profile: null,
-            session: null,
-            isLoading: false,
-            isAuthenticated: false,
-            isAdmin: false,
-          });
+          setState({ ...INITIAL_STATE, isLoading: false });
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
@@ -138,61 +189,76 @@ export function useAuth(): UseAuthReturn {
 
     initAuth();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
           const profile = await fetchProfile(session.user.id);
-
-          setState({
-            user: session.user,
-            profile,
-            session,
-            isLoading: false,
-            isAuthenticated: true,
-            isAdmin: profile?.role === 'admin',
-          });
-
+          const newState = await buildAuthState(session, profile);
+          setState(newState);
           router.refresh();
         } else if (event === 'SIGNED_OUT') {
-          setState({
-            user: null,
-            profile: null,
-            session: null,
-            isLoading: false,
-            isAuthenticated: false,
-            isAdmin: false,
-          });
-
+          setState({ ...INITIAL_STATE, isLoading: false });
           router.refresh();
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        } else if (event === 'TOKEN_REFRESHED' && session) {
           setState((prev) => ({
             ...prev,
             session,
-            user: session.user,
+            user: session.user ?? prev.user,
           }));
         } else if (event === 'USER_UPDATED' && session?.user) {
           const profile = await fetchProfile(session.user.id);
-
-          setState((prev) => ({
-            ...prev,
-            user: session.user,
-            profile,
-            isAdmin: profile?.role === 'admin',
-          }));
+          const newState = await buildAuthState(session, profile);
+          setState(newState);
         }
       }
     );
 
+    blockIntervalRef.current = setInterval(async () => {
+      if (userRef.current) {
+        await checkBlockStatus();
+      }
+    }, BLOCK_CHECK_INTERVAL);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkSession();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    sessionIntervalRef.current = setInterval(async () => {
+      if (userRef.current) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.expires_at) {
+          const expiresAt = session.expires_at * 1000;
+          const timeUntilExpiry = expiresAt - Date.now();
+
+          if (timeUntilExpiry < 300_000 && timeUntilExpiry > 0) {
+            await refreshSession();
+          }
+
+          setState((prev) => ({
+            ...prev,
+            sessionExpiresAt: new Date(expiresAt).toISOString(),
+          }));
+        }
+      }
+    }, SESSION_HEALTH_INTERVAL);
+
     return () => {
       subscription.unsubscribe();
+      if (blockIntervalRef.current) clearInterval(blockIntervalRef.current);
+      if (sessionIntervalRef.current) clearInterval(sessionIntervalRef.current);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [supabase, fetchProfile, router]);
+  }, [supabase, fetchProfile, buildAuthState, router, checkBlockStatus, refreshSession, checkSession]);
 
   return {
     ...state,
     signOut,
     refreshSession,
     refreshProfile,
+    checkBlockStatus,
+    checkSession,
   };
 }

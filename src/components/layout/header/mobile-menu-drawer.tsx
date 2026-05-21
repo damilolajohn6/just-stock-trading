@@ -12,11 +12,16 @@ import {
   Settings,
   LogOut,
   Shield,
+  BadgeCheck,
+  BadgeAlert,
+  ShieldCheck,
+  Fingerprint,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Logo } from '@/components/shared/logo';
 import { useUIStore } from '@/store/ui-store';
 import { useAuthContext } from '@/components/providers/auth-provider';
@@ -30,7 +35,15 @@ interface MobileMenuDrawerProps {
 export function MobileMenuDrawer({ navItems = [] }: MobileMenuDrawerProps) {
   const pathname = usePathname();
   const { isMobileMenuOpen, closeMobileMenu } = useUIStore();
-  const { user, profile, isAuthenticated, isAdmin, signOut } = useAuthContext();
+  const {
+    user,
+    profile,
+    isAuthenticated,
+    isAdmin,
+    emailVerified,
+    hasMfa,
+    signOut,
+  } = useAuthContext();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
   const toggleExpanded = (label: string) => {
@@ -123,9 +136,31 @@ export function MobileMenuDrawer({ navItems = [] }: MobileMenuDrawerProps) {
             {/* Account section */}
             {isAuthenticated && user ? (
               <div className="space-y-1">
-                <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Account
-                </p>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Account
+                  </p>
+                  <div className="flex gap-1">
+                    {emailVerified ? (
+                      <BadgeCheck className="h-3.5 w-3.5 text-primary" />
+                    ) : (
+                      <BadgeAlert className="h-3.5 w-3.5 text-destructive" />
+                    )}
+                    {hasMfa && <ShieldCheck className="h-3.5 w-3.5 text-primary" />}
+                    {isAdmin && <Shield className="h-3.5 w-3.5 text-primary" />}
+                  </div>
+                </div>
+
+                {/* Security badges */}
+                <div className="flex flex-wrap gap-1 px-3 pb-2">
+                  {!emailVerified && (
+                    <Badge variant="warning" className="text-[10px] px-1.5 py-0">
+                      <BadgeAlert className="h-3 w-3 mr-0.5" />
+                      Unverified email
+                    </Badge>
+                  )}
+                </div>
+
                 <Link
                   href="/account"
                   onClick={handleLinkClick}
@@ -158,6 +193,17 @@ export function MobileMenuDrawer({ navItems = [] }: MobileMenuDrawerProps) {
                   <Settings className="h-4 w-4" />
                   Settings
                 </Link>
+
+                {!hasMfa && (
+                  <Link
+                    href="/account/settings#security"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  >
+                    <Fingerprint className="h-4 w-4" />
+                    Enable Two-Factor Auth
+                  </Link>
+                )}
 
                 {isAdmin && (
                   <Link

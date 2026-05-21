@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingBag, Menu, Heart } from 'lucide-react';
+import { Search, ShoppingBag, Menu, Heart, X } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/shared/logo';
@@ -13,6 +13,7 @@ import { SearchBar } from './search-bar';
 import { MobileMenuDrawer } from './mobile-menu-drawer';
 import { useUIStore } from '@/store/ui-store';
 import { useCartStore } from '@/store/cart-store';
+import { useAuthContext } from '@/components/providers/auth-provider';
 import type { MainNavItem } from '@/constants/navigation';
 
 interface HeaderClientProps {
@@ -21,8 +22,10 @@ interface HeaderClientProps {
 
 export function HeaderClient({ navItems = [] }: HeaderClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [dismissUnverifiedBanner, setDismissUnverifiedBanner] = useState(false);
   const { openMobileMenu, openSearch } = useUIStore();
   const itemCount = useCartStore((state) => state.getItemCount());
+  const { isAuthenticated, emailVerified } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +44,32 @@ export function HeaderClient({ navItems = [] }: HeaderClientProps) {
           isScrolled ? 'border-b bg-background/95 shadow-sm backdrop-blur-md' : 'bg-background'
         )}
       >
+        {/* Unverified email banner */}
+        {isAuthenticated && !emailVerified && !dismissUnverifiedBanner && (
+          <div className="border-b bg-destructive/5 px-4 py-1.5">
+            <div className="container flex items-center justify-between gap-2">
+              <p className="text-xs text-destructive">
+                Your email is not verified.{' '}
+                <Link
+                  href="/account/settings"
+                  className="underline underline-offset-2 hover:text-destructive/80"
+                >
+                  Verify now
+                </Link>
+              </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 flex-shrink-0"
+                onClick={() => setDismissUnverifiedBanner(true)}
+              >
+                <X className="h-3 w-3" />
+                <span className="sr-only">Dismiss</span>
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Main header */}
         <div className="container">
           <div className="flex h-16 items-center justify-between gap-4">

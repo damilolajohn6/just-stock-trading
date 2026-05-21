@@ -10,6 +10,7 @@ import { AlertCircle } from 'lucide-react';
 
 import { loginSchema, type LoginFormData } from '@/validators/auth';
 import { signIn } from '@/actions/auth';
+import { useAuthContext } from '@/components/providers/auth-provider';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { FormField, SubmitButton, PasswordInput } from '@/components/forms';
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/account';
   const errorParam = searchParams.get('error');
+  const { checkSession } = useAuthContext();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(errorParam);
@@ -41,6 +43,7 @@ export default function LoginPage() {
 
       if (result.success) {
         toast.success('Welcome back!');
+        await checkSession();
         router.push(redirectTo);
         router.refresh();
       } else {

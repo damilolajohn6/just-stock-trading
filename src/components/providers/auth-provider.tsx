@@ -6,20 +6,9 @@ import {
   type ReactNode,
 } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { User, Session } from '@supabase/supabase-js';
-import type { Profile } from '@/types/user';
+import type { UseAuthReturn } from '@/types/user';
 
-interface AuthContextType {
-  user: User | null;
-  profile: Profile | null;
-  session: Session | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  isAdmin: boolean;
-  signOut: () => Promise<void>;
-  refreshSession: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
-}
+interface AuthContextType extends UseAuthReturn {}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

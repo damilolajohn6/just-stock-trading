@@ -113,14 +113,14 @@ const getEmailLayout = (title: string, bodyContent: string) => {
         <div class="wrapper">
           <div class="container">
             <div class="header">
-              <h1>THRIFT MARKETPLACE</h1>
+              <h1>Just Stock Trading Limited</h1>
             </div>
             <div class="content">
               ${bodyContent}
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} Thrift Marketplace. All rights reserved.</p>
-              <p>Need support? Contact us at <a href="mailto:support@thriftmarketplace.com">support@thriftmarketplace.com</a></p>
+              <p>&copy; ${new Date().getFullYear()} Just Stock Trading Limited. All rights reserved.</p>
+              <p>Need support? Contact us at <a href="mailto:support@justclothing.co.uk">support@justclothing.co.uk</a></p>
             </div>
           </div>
         </div>
@@ -448,14 +448,14 @@ export async function sendOrderStatusUpdateEmail(
 export async function sendWelcomeEmail(userEmail: string, userName: string): Promise<boolean> {
   try {
     const bodyContent = `
-      <h2 style="font-size: 20px; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 8px;">Welcome to Thrift Marketplace!</h2>
+      <h2 style="font-size: 20px; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 8px;">Welcome to Just Stock Trading Limited!</h2>
       <p style="font-size: 15px; color: #4b5563; line-height: 1.5; margin-top: 0; margin-bottom: 24px;">
         Hi ${userName},<br>
         We're thrilled to have you here. Your account has been successfully created.
       </p>
 
       <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 24px;">
-        Thrift Marketplace is your home for high-quality vintage, second-hand clothing, and bulk kilo bundles. By shopping with us, you are not only saving money but also making an eco-friendly choice to support sustainable fashion!
+        Just Stock Trading Limited  is your home for high-quality vintage, second-hand clothing, and bulk kilo bundles. By shopping with us, you are not only saving money but also making an eco-friendly choice to support sustainable fashion!
       </p>
 
       <div style="background-color: #f9fafb; border-radius: 12px; padding: 24px; border: 1px solid #f3f4f6; margin-bottom: 32px;">
@@ -472,13 +472,13 @@ export async function sendWelcomeEmail(userEmail: string, userName: string): Pro
       </div>
     `;
 
-    const html = getEmailLayout("Welcome to Thrift Marketplace", bodyContent);
+    const html = getEmailLayout("Welcome to Just Stock Trading Limited", bodyContent);
 
     if (resend) {
       const response = await resend.emails.send({
         from: fromEmail,
         to: userEmail,
-        subject: "Welcome to Thrift Marketplace!",
+        subject: "Welcome to Just Stock Trading Limited!",
         html,
       });
 
@@ -492,9 +492,9 @@ export async function sendWelcomeEmail(userEmail: string, userName: string): Pro
     } else {
       console.log("\n================ [MOCK EMAIL SERVICE] ================");
       console.log(`To: ${userEmail}`);
-      console.log(`Subject: Welcome to Thrift Marketplace!`);
+      console.log(`Subject: Welcome to Just Stock Trading Limited!`);
       console.log(`Body (Truncated):`);
-      console.log(`Hi ${userName}, welcome to Thrift Marketplace!`);
+      console.log(`Hi ${userName}, welcome to Just Stock Trading Limited!`);
       console.log("====================================================\n");
       return true;
     }

@@ -2,9 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendWelcomeEmail } from '@/lib/email';
+import { checkRateLimit, getRateLimitKey } from '@/lib/auth/rate-limiter';
 import {
   loginSchema,
   registerSchema,
@@ -20,7 +22,6 @@ import {
   type ProfileUpdateFormData,
 } from '@/validators/auth';
 
-// Response type for auth actions
 export type AuthActionResponse = {
   success: boolean;
   message?: string;
@@ -28,12 +29,23 @@ export type AuthActionResponse = {
   errors?: Record<string, string[]>;
 };
 
-// ============================================
-// SIGN IN
-// ============================================
+async function getClientIp(): Promise<string> {
+  const headersList = await headers();
+  return headersList.get('x-forwarded-for') ?? headersList.get('x-real-ip') ?? 'unknown';
+}
 
 export async function signIn(formData: LoginFormData): Promise<AuthActionResponse> {
-  // Validate input
+  const ip = await getClientIp();
+  const rateCheck = checkRateLimit(getRateLimitKey(ip, 'signin'), 5, 60_000);
+
+  if (!rateCheck.allowed) {
+    const retryAfter = Math.ceil((rateCheck.resetAt - Date.now()) / 1000);
+    return {
+      success: false,
+      error: `Too many attempts. Please try again in ${retryAfter} seconds.`,
+    };
+  }
+
   const validatedFields = loginSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -55,15 +67,14 @@ export async function signIn(formData: LoginFormData): Promise<AuthActionRespons
 
   if (error) {
     console.error('Sign in error:', error.message);
-    
-    // Map error messages to user-friendly ones
+
     if (error.message.includes('Invalid login credentials')) {
       return {
         success: false,
         error: 'Invalid email or password. Please try again.',
       };
     }
-    
+
     if (error.message.includes('Email not confirmed')) {
       return {
         success: false,
@@ -77,8 +88,8 @@ export async function signIn(formData: LoginFormData): Promise<AuthActionRespons
     };
   }
 
-  // Check if user is blocked
-  const { data: profile } = await supabase
+  const adminClient = createAdminClient();
+  const { data: profile } = await adminClient
     .from('profiles')
     .select('is_blocked')
     .eq('email', email)
@@ -96,12 +107,18 @@ export async function signIn(formData: LoginFormData): Promise<AuthActionRespons
   return { success: true, message: 'Signed in successfully' };
 }
 
-// ============================================
-// SIGN UP
-// ============================================
-
 export async function signUp(formData: RegisterFormData): Promise<AuthActionResponse> {
-  // Validate input
+  const ip = await getClientIp();
+  const rateCheck = checkRateLimit(getRateLimitKey(ip, 'signup'), 3, 60_000);
+
+  if (!rateCheck.allowed) {
+    const retryAfter = Math.ceil((rateCheck.resetAt - Date.now()) / 1000);
+    return {
+      success: false,
+      error: `Too many registration attempts. Please try again in ${retryAfter} seconds.`,
+    };
+  }
+
   const validatedFields = registerSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -116,7 +133,6 @@ export async function signUp(formData: RegisterFormData): Promise<AuthActionResp
 
   const supabase = await createClient();
 
-  // Check if email already exists
   const adminClient = createAdminClient();
   const { data: existingUser } = await adminClient
     .from('profiles')
@@ -150,7 +166,6 @@ export async function signUp(formData: RegisterFormData): Promise<AuthActionResp
     };
   }
 
-  // Send welcome email notification
   try {
     await sendWelcomeEmail(email, fullName);
   } catch (emailError) {
@@ -163,10 +178,6 @@ export async function signUp(formData: RegisterFormData): Promise<AuthActionResp
   };
 }
 
-// ============================================
-// SIGN OUT
-// ============================================
-
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -174,14 +185,20 @@ export async function signOut(): Promise<void> {
   redirect('/');
 }
 
-// ============================================
-// FORGOT PASSWORD
-// ============================================
-
 export async function forgotPassword(
   formData: ForgotPasswordFormData
 ): Promise<AuthActionResponse> {
-  // Validate input
+  const ip = await getClientIp();
+  const rateCheck = checkRateLimit(getRateLimitKey(ip, 'forgot-password'), 3, 120_000);
+
+  if (!rateCheck.allowed) {
+    const retryAfter = Math.ceil((rateCheck.resetAt - Date.now()) / 1000);
+    return {
+      success: false,
+      error: `Too many requests. Please try again in ${retryAfter} seconds.`,
+    };
+  }
+
   const validatedFields = forgotPasswordSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -208,21 +225,15 @@ export async function forgotPassword(
     };
   }
 
-  // Always return success to prevent email enumeration
   return {
     success: true,
     message: 'If an account exists with this email, you will receive a password reset link.',
   };
 }
 
-// ============================================
-// RESET PASSWORD
-// ============================================
-
 export async function resetPassword(
   formData: ResetPasswordFormData
 ): Promise<AuthActionResponse> {
-  // Validate input
   const validatedFields = resetPasswordSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -255,14 +266,9 @@ export async function resetPassword(
   };
 }
 
-// ============================================
-// UPDATE PASSWORD (when logged in)
-// ============================================
-
 export async function updatePassword(
   formData: UpdatePasswordFormData
 ): Promise<AuthActionResponse> {
-  // Validate input
   const validatedFields = updatePasswordSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -277,7 +283,6 @@ export async function updatePassword(
 
   const supabase = await createClient();
 
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user?.email) {
@@ -287,7 +292,6 @@ export async function updatePassword(
     };
   }
 
-  // Verify current password by attempting to sign in
   const { error: signInError } = await supabase.auth.signInWithPassword({
     email: user.email,
     password: currentPassword,
@@ -300,7 +304,6 @@ export async function updatePassword(
     };
   }
 
-  // Update password
   const { error } = await supabase.auth.updateUser({
     password: newPassword,
   });
@@ -313,20 +316,16 @@ export async function updatePassword(
     };
   }
 
+  revalidatePath('/account/settings');
   return {
     success: true,
     message: 'Password updated successfully.',
   };
 }
 
-// ============================================
-// UPDATE PROFILE
-// ============================================
-
 export async function updateProfile(
   formData: ProfileUpdateFormData
 ): Promise<AuthActionResponse> {
-  // Validate input
   const validatedFields = profileUpdateSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -341,7 +340,6 @@ export async function updateProfile(
 
   const supabase = await createClient();
 
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -351,7 +349,6 @@ export async function updateProfile(
     };
   }
 
-  // Update profile in database
   const { error } = await supabase
     .from('profiles')
     .update({
@@ -369,7 +366,6 @@ export async function updateProfile(
     };
   }
 
-  // Also update auth metadata
   await supabase.auth.updateUser({
     data: { full_name: fullName },
   });
@@ -380,10 +376,6 @@ export async function updateProfile(
     message: 'Profile updated successfully.',
   };
 }
-
-// ============================================
-// OAUTH SIGN IN
-// ============================================
 
 export async function signInWithGoogle(): Promise<void> {
   const supabase = await createClient();
@@ -409,13 +401,20 @@ export async function signInWithGoogle(): Promise<void> {
   }
 }
 
-// ============================================
-// RESEND VERIFICATION EMAIL
-// ============================================
-
 export async function resendVerificationEmail(
   email: string
 ): Promise<AuthActionResponse> {
+  const ip = await getClientIp();
+  const rateCheck = checkRateLimit(getRateLimitKey(ip, 'resend-verification'), 3, 120_000);
+
+  if (!rateCheck.allowed) {
+    const retryAfter = Math.ceil((rateCheck.resetAt - Date.now()) / 1000);
+    return {
+      success: false,
+      error: `Too many requests. Please try again in ${retryAfter} seconds.`,
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resend({
@@ -440,10 +439,6 @@ export async function resendVerificationEmail(
   };
 }
 
-// ============================================
-// DELETE ACCOUNT
-// ============================================
-
 export async function deleteAccount(): Promise<AuthActionResponse> {
   const supabase = await createClient();
 
@@ -456,7 +451,6 @@ export async function deleteAccount(): Promise<AuthActionResponse> {
     };
   }
 
-  // Use admin client to delete user
   const adminClient = createAdminClient();
 
   const { error } = await adminClient.auth.admin.deleteUser(user.id);
@@ -469,7 +463,6 @@ export async function deleteAccount(): Promise<AuthActionResponse> {
     };
   }
 
-  // Sign out
   await supabase.auth.signOut();
 
   revalidatePath('/', 'layout');

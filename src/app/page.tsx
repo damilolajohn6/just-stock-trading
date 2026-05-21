@@ -39,28 +39,19 @@ export default function HomePage() {
           <Composition />
           <Offers />
           <PackagingShowcase />
+          {/* Photo Gallery */}
+          <PhotoGallery />
           <About />
           <TrustSignals />
           <QualityStandards />
+          {/* Shop by Weight/Bundles */}
+          <ShopByWeight />
           <FAQ />
           <Contact />
           <CTABanner />
+          {/* Newsletter */}
+          <NewsletterSection />
         </div>
-
-        {/* Value Proposition Strip */}
-        <ValueProps />
-
-        {/* Alternating Image/Text Sections */}
-        <ImageShowcase />
-
-        {/* Photo Gallery */}
-        <PhotoGallery />
-
-        {/* Shop by Weight/Bundles */}
-        <ShopByWeight />
-
-        {/* Newsletter */}
-        <NewsletterSection />
       </main>
 
       <Footer />

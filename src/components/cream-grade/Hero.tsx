@@ -1,5 +1,6 @@
 "use client";
-
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -57,22 +58,26 @@ export default function Hero() {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4"
             >
-              <a
-                href="/contact-us"
-                className="group relative px-8 py-4 md:px-10 md:py-5 bg-premium-charcoal text-white rounded-full font-bold text-base md:text-lg overflow-hidden transition-all duration-500 hover:pr-12 md:hover:pr-14 w-full sm:w-auto"
-              >
-                <span className="relative z-10">Request a Quote</span>
-                <span className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <ArrowRight size={18} />
-                </span>
-                <div className="absolute inset-0 bg-premium-gold scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-              </a>
-              <a
-                href="/services"
-                className="px-8 py-4 md:px-10 md:py-5 border border-premium-charcoal/20 text-premium-charcoal rounded-full font-bold text-base md:text-lg hover:bg-premium-charcoal/5 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto"
-              >
-                View Our Services
-              </a>
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                        <Button
+                          asChild
+                          size="lg"
+                          className="h-14 rounded-full bg-white px-10 text-lg font-semibold text-black shadow-2xl shadow-white/20 hover:bg-white/90"
+                        >
+                          <Link href="/products">
+                            Start Shopping
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Link>
+                        </Button>
+                        <Button
+                          asChild
+                          size="lg"
+                          variant="outline"
+                          className="h-14 rounded-full border-white/30 px-10 text-lg text-white backdrop-blur-sm hover:bg-white/10"
+                        >
+                          <Link href="/products?sort=newest">New Arrivals</Link>
+                        </Button>
+                      </div>
             </motion.div>
           </motion.div>
 
@@ -91,7 +96,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
-        className="w-full mt-12 lg:mt-0 lg:absolute lg:bottom-12 lg:left-0 lg:right-0 px-4"
+        className="w-full mt-12 lg:mt-0 lg:relative lg:bottom-12 lg:left-0 lg:right-0 px-4"
       >
         <div className="container mx-auto">
           <div className="grid grid-cols-2 lg:flex lg:justify-between items-center max-w-4xl mx-auto px-4 py-6 md:px-12 md:py-8 bg-white/40 lg:bg-white/30 backdrop-blur-md rounded-3xl border border-white/50 shadow-2xl shadow-premium-gold/5 gap-y-6 lg:gap-y-0 text-center">

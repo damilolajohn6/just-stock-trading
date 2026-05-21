@@ -176,8 +176,6 @@ export async function getNavCategories(): Promise<MainNavItem[]> {
 
   // Append static nav items
   navItems.push(
-    { label: 'New Arrivals', href: '/products?sort=newest' },
-    { label: 'Sale', href: '/products?sale=true' },
     {
       label: 'Products',
       href: '#',

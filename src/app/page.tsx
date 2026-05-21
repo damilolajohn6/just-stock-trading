@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/mobile-bottom-nav';
 import { SearchDrawer } from '@/components/layout/header/search-drawer';
 
 import {
-  AnnouncementBar,
+  // AnnouncementBar,
   FunnelHero,
   ValueProps,
   ImageShowcase,
@@ -16,7 +16,7 @@ import {
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <AnnouncementBar />
+      {/* <AnnouncementBar /> */}
       <Header />
 
       <main className="flex-1 pb-20 lg:pb-0">

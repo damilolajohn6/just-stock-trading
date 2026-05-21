@@ -121,7 +121,7 @@
     padding-bottom: calc(var(--mobile-nav-height) + var(--safe-area-inset-bottom));
   }
 
-  @screen md {
+  @media (min-width: 768px) {
     .page-wrapper {
       padding-bottom: 0;
     }

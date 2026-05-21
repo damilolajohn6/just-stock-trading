@@ -131,13 +131,13 @@ export const footerNavGroups = [
       { label: 'Shipping', href: '/shipping' },
       { label: 'Returns', href: '/returns' },
       { label: 'Size Guide', href: '/size-guide' },
-      { label: 'Contact Us', href: '/contact-us' },
+      { label: 'Contact', href: '/contact-us' },
     ],
   },
   {
     label: 'Company',
     items: [
-      { label: 'About Us', href: '/about-us' },
+      { label: 'About', href: '/about-us' },
       { label: 'Sustainability', href: '/sustainability' },
       { label: 'Careers', href: '/careers' },
       { label: 'Press', href: '/press' },

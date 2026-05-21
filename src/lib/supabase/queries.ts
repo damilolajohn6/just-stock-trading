@@ -195,8 +195,8 @@ export async function getNavCategories(): Promise<MainNavItem[]> {
         { label: 'Shipping', href: '/shipping' },
       ],
     },
-    { label: 'About Us', href: '/about-us' },
-    { label: 'Contact Us', href: '/contact-us' }
+    { label: 'About', href: '/about-us' },
+    { label: 'Contact', href: '/contact-us' }
   );
 
   return navItems;

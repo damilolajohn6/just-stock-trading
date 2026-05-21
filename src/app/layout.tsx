@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers";
 import { siteConfig } from "@/constants/config";
 import "./globals.css";
 import { ProgressProvider } from "@/components/providers/progress-provider";
+import WhatsAppButton from "@/components/cream-grade/WhatsAppButton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -90,11 +91,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased`}
+        className={`${inter.variable} 
+        ${playfair.variable} 
+        font-sans antialiased 
+        bg-transparent 
+        relative 
+        min-h-screen`}
       >
         <Providers>
           <ProgressProvider />
-          {children}
+          <div className="relative z-10">{children}</div>
+          <WhatsAppButton />
         </Providers>
       </body>
     </html>

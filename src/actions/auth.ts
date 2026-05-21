@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendWelcomeEmail } from '@/lib/email';
 import {
   loginSchema,
   registerSchema,
@@ -147,6 +148,13 @@ export async function signUp(formData: RegisterFormData): Promise<AuthActionResp
       success: false,
       error: error.message,
     };
+  }
+
+  // Send welcome email notification
+  try {
+    await sendWelcomeEmail(email, fullName);
+  } catch (emailError) {
+    console.error('Failed to send welcome email:', emailError);
   }
 
   return {

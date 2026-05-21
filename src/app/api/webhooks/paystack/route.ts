@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import crypto from 'crypto';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -36,6 +37,13 @@ export async function POST(req: Request) {
         .eq('id', orderId);
         
       console.log(`Order ${orderId} marked as paid (Paystack)`);
+
+      // Send order confirmation email
+      try {
+        await sendOrderConfirmationEmail(orderId);
+      } catch (emailError) {
+        console.error("Failed to send order confirmation email via Paystack webhook:", emailError);
+      }
     }
   }
 

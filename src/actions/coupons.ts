@@ -26,3 +26,18 @@ export async function deleteCoupon(id: string) {
   revalidatePath('/admin/coupons');
   return { success: true };
 }
+
+export async function getCoupons() {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching coupons:', error);
+    return [];
+  }
+
+  return data || [];
+}

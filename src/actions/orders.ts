@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { CheckoutFormData, AddressFormData } from '@/validators/checkout';
 import type { CartItem } from '@/store/cart-store';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 
 export interface CreateOrderData {
   email: string;
@@ -254,6 +255,15 @@ export async function updateOrderPayment(
   if (error) {
     console.error('Error updating order payment:', error);
     return { success: false, error: 'Failed to update order' };
+  }
+
+  // Send confirmation email
+  if (status === 'paid') {
+    try {
+      await sendOrderConfirmationEmail(orderId);
+    } catch (emailError) {
+      console.error('Failed to send order confirmation email:', emailError);
+    }
   }
 
   revalidatePath('/account/orders');

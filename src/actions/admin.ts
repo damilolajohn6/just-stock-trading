@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { createAdminClient, isUserAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe/server';
+import { sendOrderStatusUpdateEmail } from '@/lib/email';
 
 // Middleware to ensure admin
 async function ensureAdmin() {
@@ -32,6 +33,16 @@ export async function updateOrderStatus(orderId: string, status: string) {
     .eq('id', orderId);
 
   if (error) return { success: false, error: 'Failed to update order' };
+
+  // Send status update email notification
+  try {
+    const validStatuses = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"];
+    if (validStatuses.includes(status)) {
+      await sendOrderStatusUpdateEmail(orderId, status as any);
+    }
+  } catch (emailError) {
+    console.error("Failed to send order status update email:", emailError);
+  }
 
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath('/admin/orders');

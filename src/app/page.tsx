@@ -5,7 +5,7 @@ import { SearchDrawer } from '@/components/layout/header/search-drawer';
 
 import {
   // AnnouncementBar,
-  FunnelHero,
+  // FunnelHero,
   ValueProps,
   ImageShowcase,
   PhotoGallery,
@@ -32,7 +32,7 @@ export default function HomePage() {
 
       <main className="flex-1 pb-20 lg:pb-0">
         {/* Full-screen Hero */}
-        <FunnelHero />
+        {/* <FunnelHero /> */}
 
         <div className="bg-white/80 transition-colors duration-500">
           <Hero />

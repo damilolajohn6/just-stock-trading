@@ -14,7 +14,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Pagination } from '@/components/shared/pagination';
 
-// Force dynamic rendering because this page depends on searchParams
 export const dynamic = 'force-dynamic';
 
 interface SearchParams {

@@ -19,55 +19,44 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords as unknown as string[],
-  authors: [{ name: siteConfig.creator }],
-  creator: siteConfig.creator,
-  metadataBase: new URL(siteConfig.url),
+  title: "Just Stock Trading Limited | Strategic Sourcing & Wholesale Export",
+  description:
+    "UK-based procurement and wholesale export company delivering used clothing, premium cream grade clothing and liquidation stock to international buyers across Africa, the Middle East, and Eastern Europe.",
+  keywords: [
+    "wholesale export UK",
+    "cream grade clothing",
+    "used clothing wholesale",
+    "liquidation stock UK",
+    "procurement services UK",
+    "clothing export Africa",
+    "wholesale clothing bales",
+    "strategic sourcing partner",
+  ],
+  authors: [{ name: "Just Stock Trading Limited" }],
   openGraph: {
-    type: "website",
-    locale: "en_GB",
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
+    title: "Just Stock Trading Limited | Strategic Sourcing & Export",
+    description:
+      "UK-based procurement and wholesale export company delivering premium cream grade clothing to international buyers.",
+    url: "https://juststocktrading.com",
+    siteName: "Just Stock Trading Limited",
     images: [
       {
-        url: siteConfig.ogImage,
+        url: "/images/bags-of-clothing.png",
         width: 1200,
         height: 630,
-        alt: siteConfig.name,
+        alt: "Just Stock Trading Limited - Wholesale Export & Sourcing",
       },
     ],
+    locale: "en_GB",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-    creator: "@thriftfactory",
+    title: "Just Stock Trading Limited | Strategic Sourcing & Export",
+    description:
+      "UK-based procurement and wholesale export company delivering premium cream grade clothing to international buyers.",
+    images: ["/images/bags-of-clothing.png"],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {

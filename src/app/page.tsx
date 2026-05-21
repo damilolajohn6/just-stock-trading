@@ -45,12 +45,12 @@ export default function HomePage() {
           <TrustSignals />
           <QualityStandards />
           {/* Shop by Weight/Bundles */}
-          <ShopByWeight />
+          {/* <ShopByWeight /> */}
           <FAQ />
           <Contact />
           <CTABanner />
           {/* Newsletter */}
-          <NewsletterSection />
+          {/* <NewsletterSection /> */}
         </div>
       </main>
 

@@ -81,13 +81,6 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          <div className="mt-12 md:mt-16 block lg:hidden w-full max-w-sm mx-auto">
-            <QuickContact variant="dark" />
-          </div>
-
-          <div className="hidden lg:block">
-            <QuickContact variant="dark" />
-          </div>
         </div>
       </div>
 

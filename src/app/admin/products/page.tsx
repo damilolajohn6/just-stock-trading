@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Edit } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/utils/format';
 import { PageHeader } from '@/components/shared/page-header';
+import { ProductActions } from '@/components/features/admin/product-actions';
 
 export default async function AdminProductsPage({
   searchParams,
@@ -79,9 +80,14 @@ export default async function AdminProductsPage({
                 </TableCell>
                 <TableCell>{product.variants[0].count}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/admin/products/${product.id}`}>Edit</Link>
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/admin/products/${product.id}`} title="Edit product">
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <ProductActions productId={product.id} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

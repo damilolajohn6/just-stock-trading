@@ -6,10 +6,10 @@ import { CONTACT } from "@/lib/constants";
 
 export default function CTABanner() {
   return (
-    <section className="py-20 bg-foreground relative overflow-hidden">
+    <section className="py-20 bg-premium-charcoal relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-[40%] h-full bg-primary opacity-5 blur-[120px]" />
-      <div className="absolute bottom-0 left-0 w-[30%] h-full bg-primary opacity-5 blur-[100px]" />
+      <div className="absolute top-0 right-0 w-[40%] h-full bg-premium-gold opacity-5 blur-[120px]" />
+      <div className="absolute bottom-0 left-0 w-[30%] h-full bg-premium-gold opacity-5 blur-[100px]" />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -19,12 +19,12 @@ export default function CTABanner() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <span className="text-primary font-bold uppercase tracking-[0.4em] text-[10px] mb-6 block">
+          <span className="text-premium-gold font-bold uppercase tracking-[0.4em] text-[10px] mb-6 block">
             Start Today
           </span>
           <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight">
             Ready to Partner{" "}
-            <span className="text-primary italic font-cormorant font-normal">
+            <span className="text-premium-gold italic font-cormorant font-normal">
               with Us?
             </span>
           </h2>
@@ -36,7 +36,7 @@ export default function CTABanner() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
               href="/contact-us"
-              className="group px-10 py-5 bg-primary text-foreground rounded-full font-bold text-lg flex items-center gap-3 hover:bg-white transition-all duration-300 shadow-xl shadow-primary/20"
+              className="group px-10 py-5 bg-premium-gold text-premium-charcoal rounded-full font-bold text-lg flex items-center gap-3 hover:bg-white transition-all duration-300 shadow-xl shadow-premium-gold/20"
             >
               Get a Quote
               <ArrowRight

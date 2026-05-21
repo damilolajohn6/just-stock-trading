@@ -71,7 +71,7 @@ const specialisations = [
 
 export default function SpecialisationsContent() {
   return (
-    <>
+    <main className="min-h-screen bg-white">
       <PageHero
         title="Quality Wholesale Goods for Global Markets"
         subtitle="Our Specialisations"
@@ -104,7 +104,7 @@ export default function SpecialisationsContent() {
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-premium-charcoal/50 to-transparent" />
                   <div className="absolute bottom-6 left-6">
                     <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
                       {spec.icon}
@@ -117,22 +117,22 @@ export default function SpecialisationsContent() {
                     i % 2 !== 0 ? "lg:[direction:ltr]" : ""
                   }`}
                 >
-                  <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20">
-                    <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                  <div className="inline-block px-4 py-1 rounded-full bg-premium-gold/10 border border-premium-gold/20">
+                    <span className="text-xs font-bold text-premium-gold uppercase tracking-widest">
                       Specialisation {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-display font-bold text-premium-charcoal">
                     {spec.title}
                   </h2>
-                  <p className="text-foreground/60 leading-relaxed text-lg">
+                  <p className="text-premium-charcoal/60 leading-relaxed text-lg">
                     {spec.description}
                   </p>
                   <ul className="space-y-3">
                     {spec.features.map((feature, j) => (
                       <li key={j} className="flex items-center gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                        <span className="text-foreground/70 font-medium">
+                        <CheckCircle2 className="w-5 h-5 text-premium-gold flex-shrink-0" />
+                        <span className="text-premium-charcoal/70 font-medium">
                           {feature}
                         </span>
                       </li>
@@ -140,7 +140,7 @@ export default function SpecialisationsContent() {
                   </ul>
                   <a
                     href="/contact-us"
-                    className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors group"
+                    className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-premium-charcoal hover:text-premium-gold transition-colors group"
                   >
                     Inquire About {spec.title}
                     <ArrowRight
@@ -158,6 +158,6 @@ export default function SpecialisationsContent() {
       <PackagingShowcase />
 
       <CTABanner />
-    </>
+    </main>
   );
 }

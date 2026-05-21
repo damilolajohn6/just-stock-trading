@@ -10,19 +10,19 @@ import CTABanner from "@/components/cream-grade/CTABanner";
 
 const wholesaleFeatures = [
   {
-    icon: <Package className="w-8 h-8 text-primary" />,
+    icon: <Package className="w-8 h-8 text-premium-gold" />,
     title: "Cream Grade Clothing",
     description:
       "Carefully selected high-quality garments — minimal wear, brand-rich, and prepared for profitable resale markets.",
   },
   {
-    icon: <BarChart3 className="w-8 h-8 text-primary" />,
+    icon: <BarChart3 className="w-8 h-8 text-premium-gold" />,
     title: "New With Tags & Liquidation",
     description:
       "Retail overstock, surplus, and clearance goods supplied in pallet and container volumes at competitive wholesale pricing.",
   },
   {
-    icon: <ShieldCheck className="w-8 h-8 text-primary" />,
+    icon: <ShieldCheck className="w-8 h-8 text-premium-gold" />,
     title: "Export-Ready Bales",
     description:
       "45kg, 50kg, and 55kg bale packaging prepared for efficient container loading and international distribution.",
@@ -31,7 +31,7 @@ const wholesaleFeatures = [
 
 export default function WholesaleContent() {
   return (
-    <>
+    <main className="min-h-screen bg-white ">
       <PageHero
         title="Premium Wholesale Clothing Supply"
         subtitle="Wholesale Solutions"
@@ -48,8 +48,8 @@ export default function WholesaleContent() {
               viewport={{ once: true }}
               className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl"
             >
-              <div className="absolute inset-0 bg-foreground/5 flex items-center justify-center">
-                <Package size={100} className="text-primary/20" />
+              <div className="absolute inset-0 bg-premium-charcoal/5 flex items-center justify-center">
+                <Package size={100} className="text-premium-gold/20" />
               </div>
               <Image
                 src="/images/aaa.jpeg"
@@ -57,9 +57,9 @@ export default function WholesaleContent() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-premium-charcoal/60 to-transparent" />
               <div className="absolute bottom-8 left-8 right-8 text-white">
-                <p className="text-sm font-bold uppercase tracking-widest mb-2 text-primary">
+                <p className="text-sm font-bold uppercase tracking-widest mb-2 text-premium-gold">
                   Export Ready
                 </p>
                 <h3 className="text-2xl font-display font-bold">
@@ -69,11 +69,11 @@ export default function WholesaleContent() {
             </motion.div>
 
             <div className="space-y-8">
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-premium-charcoal">
                 Sourced & Supplied{" "}
-                <span className="text-primary">with Confidence.</span>
+                <span className="text-premium-gold">with Confidence.</span>
               </h2>
-              <p className="text-foreground/60 leading-relaxed text-lg">
+              <p className="text-premium-charcoal/60 leading-relaxed text-lg">
                 We source directly from trusted UK suppliers, negotiate
                 competitive wholesale pricing, conduct quality checks, and
                 consolidate shipments — providing everything you need for
@@ -91,10 +91,10 @@ export default function WholesaleContent() {
                     className="space-y-3"
                   >
                     {feature.icon}
-                    <h4 className="font-bold text-foreground">
+                    <h4 className="font-bold text-premium-charcoal">
                       {feature.title}
                     </h4>
-                    <p className="text-sm text-foreground/50 leading-relaxed">
+                    <p className="text-sm text-premium-charcoal/50 leading-relaxed">
                       {feature.description}
                     </p>
                   </motion.div>
@@ -104,7 +104,7 @@ export default function WholesaleContent() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="mt-8 px-8 py-4 bg-foreground text-white rounded-full font-bold flex items-center gap-3 hover:bg-primary transition-colors shadow-xl"
+                className="mt-8 px-8 py-4 bg-premium-charcoal text-white rounded-full font-bold flex items-center gap-3 hover:bg-premium-gold transition-colors shadow-xl"
               >
                 Inquire for Pricing <QuickContact />
               </motion.button>
@@ -114,13 +114,13 @@ export default function WholesaleContent() {
       </section>
 
       {/* Volume Tiers */}
-      <section className="py-24 bg-muted/30">
+      <section className="py-24 bg-premium-cream">
         <div className="container mx-auto px-14 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-premium-charcoal">
               Flexible Volume for Every Buyer
             </h2>
-            <p className="text-foreground/50">
+            <p className="text-premium-charcoal/50">
               Whether you&apos;re an established importer or expanding into new
               markets, we have supply capacity to match your requirements.
             </p>
@@ -146,19 +146,19 @@ export default function WholesaleContent() {
             ].map((card, i) => (
               <div
                 key={i}
-                className="p-8 bg-white rounded-3xl border border-primary/10 hover:border-primary/30 transition-all shadow-sm"
+                className="p-8 bg-white rounded-3xl border border-premium-gold/10 hover:border-premium-gold/30 transition-all shadow-sm"
               >
-                <span className="text-[10px] uppercase tracking-widest font-bold text-primary mb-2 block">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-premium-gold mb-2 block">
                   {card.tier}
                 </span>
-                <h3 className="text-2xl font-display font-bold text-foreground mb-4">
+                <h3 className="text-2xl font-display font-bold text-premium-charcoal mb-4">
                   {card.weight}
                 </h3>
-                <p className="text-sm text-foreground/40 mb-8">
+                <p className="text-sm text-premium-charcoal/40 mb-8">
                   {card.desc}
                 </p>
-                <div className="h-[1px] bg-primary/10 w-full mb-8" />
-                <button className="text-xs font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">
+                <div className="h-[1px] bg-premium-gold/10 w-full mb-8" />
+                <button className="text-xs font-bold uppercase tracking-widest text-premium-charcoal hover:text-premium-gold transition-colors">
                   Request Quote
                 </button>
               </div>
@@ -170,6 +170,6 @@ export default function WholesaleContent() {
       <PackagingShowcase />
 
       <CTABanner />
-    </>
+    </main>
   );
 }

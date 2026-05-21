@@ -7,7 +7,8 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Global Export Coordination & Logistics | Just Stock Trading',
-  description: 'From our UK sourcing network to your doorstep, anywhere in the world. We coordinate seamless international distribution of quality wholesale clothing and liquidation stock.',
+  description:
+    'From our UK sourcing network to your doorstep, anywhere in the world. We coordinate seamless international distribution of quality wholesale clothing and liquidation stock.',
 };
 
 export default function ExportsPage() {

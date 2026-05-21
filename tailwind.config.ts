@@ -72,6 +72,13 @@ const config: Config = {
           forest: '#228B22',
           vintage: '#D4A574',
         },
+        premium: {
+          cream: "#FDFBF7",
+          charcoal: "#121212",
+          gold: "#C5A059",
+          silver: "#E5E5E5",
+          dark: "#1A1A1A",
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

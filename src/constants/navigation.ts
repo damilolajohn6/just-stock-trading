@@ -102,17 +102,17 @@ export const adminNavGroups: AdminNavGroup[] = [
 
 // Footer navigation
 export const footerNavGroups = [
-  {
-    label: 'Shop',
-    items: [
-      { label: 'Women', href: '/categories/women' },
-      { label: 'Men', href: '/categories/men' },
-      { label: 'Vintage', href: '/categories/vintage' },
-      { label: 'Accessories', href: '/categories/accessories' },
-      { label: 'New Arrivals', href: '/products?sort=newest' },
-      { label: 'Sale', href: '/products?sale=true' },
-    ],
-  },
+  // {
+  //   label: 'Shop',
+  //   items: [
+  //     { label: 'Women', href: '/categories/women' },
+  //     { label: 'Men', href: '/categories/men' },
+  //     { label: 'Vintage', href: '/categories/vintage' },
+  //     { label: 'Accessories', href: '/categories/accessories' },
+  //     { label: 'New Arrivals', href: '/products?sort=newest' },
+  //     { label: 'Sale', href: '/products?sale=true' },
+  //   ],
+  // },
   {
     label: 'Services',
     items: [

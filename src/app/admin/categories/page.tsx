@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/page-header';
 import Image from 'next/image';
+import { CategoryActions } from '@/components/features/admin/category-actions';
 
 export default async function AdminCategoriesPage() {
   const supabase = createAdminClient();
@@ -65,11 +66,14 @@ export default async function AdminCategoriesPage() {
                 </TableCell>
                 <TableCell>{cat.sort_order}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/admin/categories/${cat.id}`}>
-                      <Edit className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/admin/categories/${cat.id}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <CategoryActions categoryId={cat.id} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

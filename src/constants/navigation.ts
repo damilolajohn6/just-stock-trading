@@ -114,19 +114,30 @@ export const footerNavGroups = [
     ],
   },
   {
+    label: 'Services',
+    items: [
+      { label: 'Our Services', href: '/services' },
+      { label: 'Specialisations', href: '/specialisations' },
+      { label: 'Wholesale', href: '/wholesale' },
+      { label: 'Live Offers', href: '/live-offers' },
+      { label: 'We Buy', href: '/we-buy' },
+      { label: 'Exports', href: '/exports' },
+    ],
+  },
+  {
     label: 'Help',
     items: [
       { label: 'FAQ', href: '/faq' },
       { label: 'Shipping', href: '/shipping' },
       { label: 'Returns', href: '/returns' },
       { label: 'Size Guide', href: '/size-guide' },
-      { label: 'Contact Us', href: '/contact' },
+      { label: 'Contact Us', href: '/contact-us' },
     ],
   },
   {
     label: 'Company',
     items: [
-      { label: 'About Us', href: '/about' },
+      { label: 'About Us', href: '/about-us' },
       { label: 'Sustainability', href: '/sustainability' },
       { label: 'Careers', href: '/careers' },
       { label: 'Press', href: '/press' },

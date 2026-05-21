@@ -177,7 +177,28 @@ export async function getNavCategories(): Promise<MainNavItem[]> {
   // Append static nav items
   navItems.push(
     { label: 'New Arrivals', href: '/products?sort=newest' },
-    { label: 'Sale', href: '/products?sale=true' }
+    { label: 'Sale', href: '/products?sale=true' },
+    {
+      label: 'Products',
+      href: '#',
+      children: [
+        { label: 'Specialisations', href: '/specialisations' },
+        { label: 'Wholesale', href: '/wholesale' },
+        { label: 'Live Offers', href: '/live-offers' },
+      ],
+    },
+    {
+      label: 'Services',
+      href: '#',
+      children: [
+        { label: 'Our Services', href: '/services' },
+        { label: 'We Buy', href: '/we-buy' },
+        { label: 'Exports', href: '/exports' },
+        { label: 'Shipping', href: '/shipping' },
+      ],
+    },
+    { label: 'About Us', href: '/about-us' },
+    { label: 'Contact Us', href: '/contact-us' }
   );
 
   return navItems;

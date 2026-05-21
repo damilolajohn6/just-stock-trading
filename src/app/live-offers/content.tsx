@@ -52,16 +52,16 @@ export default function LiveOffersContent() {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20">
-                <span className="text-xs font-bold text-primary uppercase tracking-widest">
+              <div className="inline-block px-4 py-1 rounded-full bg-premium-gold/10 border border-premium-gold/20">
+                <span className="text-xs font-bold text-premium-gold uppercase tracking-widest">
                   How It Works
                 </span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-premium-charcoal">
                 Real-time Stock.{" "}
-                <span className="text-primary">Direct Access.</span>
+                <span className="text-premium-gold">Direct Access.</span>
               </h2>
-              <p className="text-foreground/60 leading-relaxed text-lg">
+              <p className="text-premium-charcoal/60 leading-relaxed text-lg">
                 Our social channels give international buyers direct visibility
                 into our current stock levels, new arrivals, and exclusive
                 wholesale pricing — all in real-time.
@@ -70,30 +70,30 @@ export default function LiveOffersContent() {
               <div className="space-y-6">
                 {[
                   {
-                    icon: <Zap className="text-primary" />,
+                    icon: <Zap className="text-premium-gold" />,
                     title: "Instant Updates",
                     text: "Be the first to know about new stock arrivals and exclusive pricing.",
                   },
                   {
-                    icon: <ShoppingBag className="text-primary" />,
+                    icon: <ShoppingBag className="text-premium-gold" />,
                     title: "Live-Only Offers",
                     text: "Special wholesale pricing available exclusively through our live sessions.",
                   },
                   {
-                    icon: <Users className="text-primary" />,
+                    icon: <Users className="text-premium-gold" />,
                     title: "Direct Communication",
                     text: "Connect directly with our sourcing team for immediate stock inquiries.",
                   },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center shadow-sm">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-premium-cream/50 flex items-center justify-center shadow-sm">
                       {item.icon}
                     </div>
                     <div>
-                      <h4 className="font-bold text-foreground">
+                      <h4 className="font-bold text-premium-charcoal">
                         {item.title}
                       </h4>
-                      <p className="text-sm text-foreground/50">
+                      <p className="text-sm text-premium-charcoal/50">
                         {item.text}
                       </p>
                     </div>

@@ -21,14 +21,14 @@ export default function AboutUsContent() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-8">
-              <div className="inline-block p-2 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+              <div className="inline-block p-2 px-4 rounded-full bg-premium-gold/10 text-premium-gold text-xs font-bold uppercase tracking-widest">
                 Our Mission
               </div>
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground">
+              <h2 className="text-4xl md:text-5xl font-display font-bold text-premium-charcoal">
                 Built for{" "}
-                <span className="text-primary">Long-Term Trade.</span>
+                <span className="text-premium-gold">Long-Term Trade.</span>
               </h2>
-              <div className="space-y-4 text-foreground/60 leading-relaxed text-lg">
+              <div className="space-y-4 text-premium-charcoal/60 leading-relaxed text-lg">
                 <p>
                   As a UK-based procurement and export agency, we specialise in
                   sourcing quality cream grade clothing and liquidation stock
@@ -57,7 +57,7 @@ export default function AboutUsContent() {
               viewport={{ once: true }}
               className="relative aspect-square"
             >
-              <div className="absolute inset-4 border border-primary/30 rounded-[40px] z-0" />
+              <div className="absolute inset-4 border border-premium-gold/30 rounded-[40px] z-0" />
               <div className="absolute inset-0 overflow-hidden rounded-[40px] shadow-2xl z-10">
                 <Image
                   src="/images/aa.jpeg"
@@ -72,13 +72,13 @@ export default function AboutUsContent() {
       </section>
 
       {/* Values Section */}
-      <section className="py-24 bg-muted/30 px-14">
+      <section className="py-24 bg-premium-cream/50 px-14">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
-            <h2 className="text-3xl font-display font-bold text-foreground">
+            <h2 className="text-3xl font-display font-bold text-premium-charcoal">
               What Sets Us Apart
             </h2>
-            <p className="text-foreground/50">
+            <p className="text-premium-charcoal/50">
               International buyers rely on us because we deliver on four key
               pillars that define every partnership we build.
             </p>
@@ -108,13 +108,13 @@ export default function AboutUsContent() {
               },
             ].map((value, i) => (
               <div key={i} className="space-y-6">
-                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-premium-gold shadow-sm">
                   {value.icon}
                 </div>
-                <h4 className="text-xl font-display font-bold text-foreground">
+                <h4 className="text-xl font-display font-bold text-premium-charcoal">
                   {value.title}
                 </h4>
-                <p className="text-sm text-foreground/50 leading-relaxed">
+                <p className="text-sm text-premium-charcoal/50 leading-relaxed">
                   {value.desc}
                 </p>
               </div>
@@ -126,8 +126,8 @@ export default function AboutUsContent() {
       {/* Locate Us */}
       <section className="py-24 bg-white ">
         <div className="container mx-auto px-4">
-          <div className="rounded-[40px] bg-foreground p-12 md:p-20 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-[50%] h-full bg-primary opacity-5 blur-[120px]" />
+          <div className="rounded-[40px] bg-premium-charcoal p-12 md:p-20 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-[50%] h-full bg-premium-gold opacity-5 blur-[120px]" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <h2 className="text-4xl font-display font-bold">
@@ -140,7 +140,7 @@ export default function AboutUsContent() {
                 </p>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <MapPin className="text-primary flex-shrink-0" />
+                    <MapPin className="text-premium-gold flex-shrink-0" />
                     <div>
                       <div className="font-bold">Headquarters</div>
                       <div className="text-white/40 text-sm">

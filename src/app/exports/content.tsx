@@ -37,11 +37,11 @@ export default function ExportsContent() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-8">
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-premium-charcoal">
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
                 Across Oceans. <br />
-                <span className="text-premium-gold">Across Borders.</span>
+                <span className="text-primary">Across Borders.</span>
               </h2>
-              <p className="text-premium-charcoal/60 leading-relaxed text-lg">
+              <p className="text-foreground/60 leading-relaxed text-lg">
                 Just Stock Trading isn&apos;t limited to the UK market. We have
                 built a robust network of freight forwarders and logistics
                 experts to ensure your stock reaches you safely, whether
@@ -57,10 +57,10 @@ export default function ExportsContent() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="text-3xl font-display font-bold text-premium-gold">
+                    <div className="text-3xl font-display font-bold text-primary">
                       {stat.value}
                     </div>
-                    <div className="text-xs uppercase tracking-widest text-premium-charcoal/40 font-bold">
+                    <div className="text-xs uppercase tracking-widest text-foreground/40 font-bold">
                       {stat.label}
                     </div>
                   </motion.div>
@@ -97,15 +97,15 @@ export default function ExportsContent() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-8 rounded-3xl bg-premium-cream/50 border border-premium-gold/10 hover:shadow-lg transition-all group"
+                  className="p-8 rounded-3xl bg-muted/30 border border-primary/10 hover:shadow-lg transition-all group"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-premium-gold mb-6 group-hover:bg-premium-charcoal group-hover:text-white transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary mb-6 group-hover:bg-foreground group-hover:text-white transition-colors">
                     {item.icon}
                   </div>
-                  <h4 className="font-bold text-premium-charcoal mb-2">
+                  <h4 className="font-bold text-foreground mb-2">
                     {item.title}
                   </h4>
-                  <p className="text-sm text-premium-charcoal/50 leading-relaxed">
+                  <p className="text-sm text-foreground/50 leading-relaxed">
                     {item.desc}
                   </p>
                 </motion.div>

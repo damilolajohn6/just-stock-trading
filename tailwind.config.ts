@@ -72,12 +72,6 @@ const config: Config = {
           forest: '#228B22',
           vintage: '#D4A574',
         },
-        // Premium brand colors
-        premium: {
-          cream: '#FDFBF7',
-          charcoal: '#101011',
-          gold: '#C5A059',
-        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -147,7 +141,6 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         'thrift-pattern': "url('/images/pattern.svg')",
-        'premium-gradient': 'linear-gradient(135deg, #101011 0%, #1c1c1e 100%)',
       },
       screens: {
         'xs': '475px',

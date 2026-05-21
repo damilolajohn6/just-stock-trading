@@ -59,10 +59,10 @@ export default function ServicesContent() {
       <section className="py-24 ">
         <div className="container mx-auto px-14">
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-premium-charcoal">
-              How We <span className="text-premium-gold">Work for You.</span>
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+              How We <span className="text-primary">Work for You.</span>
             </h2>
-            <p className="text-premium-charcoal/50">
+            <p className="text-foreground/50">
               We represent your interests locally — ensuring transparency,
               efficiency, and reliability at every step.
             </p>
@@ -101,18 +101,18 @@ export default function ServicesContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="relative group p-8 rounded-3xl bg-premium-cream/50 border border-premium-gold/5"
+                className="relative group p-8 rounded-3xl bg-muted/30 border border-primary/5"
               >
-                <div className="absolute top-6 right-6 text-4xl font-display font-bold text-premium-gold/10 group-hover:text-premium-gold/20 transition-colors">
+                <div className="absolute top-6 right-6 text-4xl font-display font-bold text-primary/10 group-hover:text-primary/20 transition-colors">
                   {item.step}
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-premium-gold mb-6 shadow-sm">
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-primary mb-6 shadow-sm">
                   {item.icon}
                 </div>
-                <h4 className="text-xl font-display font-bold text-premium-charcoal mb-4">
+                <h4 className="text-xl font-display font-bold text-foreground mb-4">
                   {item.title}
                 </h4>
-                <p className="text-sm text-premium-charcoal/40 leading-relaxed">
+                <p className="text-sm text-foreground/40 leading-relaxed">
                   {item.desc}
                 </p>
               </motion.div>
@@ -122,15 +122,15 @@ export default function ServicesContent() {
       </section>
 
       {/* Detailed Services */}
-      <section className="py-24 bg-premium-charcoal text-white rounded-[40px] md:rounded-[80px] mx-4 md:mx-8 mb-24 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-[40%] h-full bg-premium-gold opacity-10 blur-[100px] -rotate-12" />
+      <section className="py-24 bg-foreground text-white rounded-[40px] md:rounded-[80px] mx-4 md:mx-8 mb-24 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[40%] h-full bg-primary opacity-10 blur-[100px] -rotate-12" />
 
         <div className="container mx-auto px-14 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
               <h2 className="text-4xl md:text-6xl font-display font-bold leading-tight">
                 Comprehensive{" "}
-                <span className="text-premium-gold">Service Portfolio.</span>
+                <span className="text-primary">Service Portfolio.</span>
               </h2>
               <div className="space-y-6">
                 {[
@@ -183,7 +183,7 @@ export default function ServicesContent() {
                     className="border-b border-white/10 pb-6"
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-premium-gold/20 flex items-center justify-center text-premium-gold">
+                      <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
                         {service.icon}
                       </div>
                       <h4 className="font-bold text-lg">{service.title}</h4>
@@ -194,7 +194,7 @@ export default function ServicesContent() {
                           key={j}
                           className="flex items-center gap-2 text-white/60 text-sm"
                         >
-                          <div className="w-1.5 h-1.5 rounded-full bg-premium-gold" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                           {item}
                         </li>
                       ))}
@@ -220,7 +220,7 @@ export default function ServicesContent() {
                     type="text"
                     name="name"
                     required
-                    className="w-full bg-transparent border-b border-white/20 py-2 focus:border-premium-gold outline-none transition-colors"
+                    className="w-full bg-transparent border-b border-white/20 py-2 focus:border-primary outline-none transition-colors"
                     placeholder="Company / Contact Name"
                   />
                 </div>
@@ -232,7 +232,7 @@ export default function ServicesContent() {
                     type="email"
                     name="email"
                     required
-                    className="w-full bg-transparent border-b border-white/20 py-2 focus:border-premium-gold outline-none transition-colors"
+                    className="w-full bg-transparent border-b border-white/20 py-2 focus:border-primary outline-none transition-colors"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -243,18 +243,18 @@ export default function ServicesContent() {
                 </label>
                 <select
                   name="type"
-                  className="w-full bg-transparent border-b border-white/20 py-2 focus:border-premium-gold outline-none transition-colors appearance-none"
+                  className="w-full bg-transparent border-b border-white/20 py-2 focus:border-primary outline-none transition-colors appearance-none"
                 >
-                  <option className="text-premium-charcoal">
+                  <option className="text-foreground">
                     Wholesale Supply
                   </option>
-                  <option className="text-premium-charcoal">
+                  <option className="text-foreground">
                     Procurement & Sourcing
                   </option>
-                  <option className="text-premium-charcoal">
+                  <option className="text-foreground">
                     Quality Control
                   </option>
-                  <option className="text-premium-charcoal">
+                  <option className="text-foreground">
                     Export Coordination
                   </option>
                 </select>
@@ -266,7 +266,7 @@ export default function ServicesContent() {
                 <textarea
                   name="details"
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-2 focus:border-premium-gold outline-none transition-colors resize-none"
+                  className="w-full bg-transparent border-b border-white/20 py-2 focus:border-primary outline-none transition-colors resize-none"
                   rows={3}
                   placeholder="Tell us about your requirements..."
                 />
@@ -274,7 +274,7 @@ export default function ServicesContent() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-premium-gold text-premium-charcoal font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-white transition-all disabled:opacity-70"
+                className="w-full py-4 bg-primary text-foreground font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-white transition-all disabled:opacity-70"
               >
                 {isSubmitting
                   ? "Sending..."

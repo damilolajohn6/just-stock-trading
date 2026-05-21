@@ -1,7 +1,7 @@
 "use client";
 
 import PageHero from "@/components/cream-grade/PageHero";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CTABanner from "@/components/cream-grade/CTABanner";
 import {
   Truck,
@@ -49,15 +49,15 @@ export default function ShippingContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-10 rounded-[40px] bg-premium-cream/50 border border-premium-gold/10 hover:border-premium-gold/30 transition-all shadow-sm group"
+                className="p-10 rounded-[40px] bg-muted/30 border border-primary/10 hover:border-primary/30 transition-all shadow-sm group"
               >
-                <div className="text-premium-gold mb-8 group-hover:scale-110 transition-transform duration-500">
+                <div className="text-primary mb-8 group-hover:scale-110 transition-transform duration-500">
                   {method.icon}
                 </div>
-                <h3 className="text-2xl font-display font-bold text-premium-charcoal mb-4">
+                <h3 className="text-2xl font-display font-bold text-foreground mb-4">
                   {method.title}
                 </h3>
-                <p className="text-premium-charcoal/50 leading-relaxed">
+                <p className="text-foreground/50 leading-relaxed">
                   {method.desc}
                 </p>
               </motion.div>
@@ -67,11 +67,11 @@ export default function ShippingContent() {
       </section>
 
       {/* FAQs Section */}
-      <section className="py-24 bg-premium-charcoal text-white">
+      <section className="py-24 bg-foreground text-white">
         <div className="container mx-auto px-14">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-display font-bold mb-16 text-center">
-              Shipping <span className="text-premium-gold">FAQs</span>
+              Shipping <span className="text-primary">FAQs</span>
             </h2>
 
             <div className="space-y-12">
@@ -100,7 +100,7 @@ export default function ShippingContent() {
                   viewport={{ once: true }}
                   className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4 md:gap-12 pb-12 border-b border-white/10"
                 >
-                  <h4 className="font-bold text-premium-gold text-lg">
+                  <h4 className="font-bold text-primary text-lg">
                     {faq.q}
                   </h4>
                   <p className="text-white/60 leading-relaxed">{faq.a}</p>
@@ -114,17 +114,17 @@ export default function ShippingContent() {
       {/* Call to Action */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-block p-4 rounded-full bg-premium-gold/5 mb-8">
-            <PhoneCall className="text-premium-gold" />
+          <div className="inline-block p-4 rounded-full bg-primary/5 mb-8">
+            <PhoneCall className="text-primary" />
           </div>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-premium-charcoal mb-8">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-8">
             Need a Custom Freight Quote?
           </h2>
-          <p className="text-premium-charcoal/50 max-w-2xl mx-auto mb-12">
+          <p className="text-foreground/50 max-w-2xl mx-auto mb-12">
             Container and large volume orders qualify for competitive freight
             rates. Contact our logistics coordination team today.
           </p>
-          <button className="px-10 py-5 bg-premium-charcoal text-white font-bold rounded-full hover:bg-premium-gold hover:text-premium-charcoal transition-all shadow-xl shadow-premium-gold/10">
+          <button className="px-10 py-5 bg-foreground text-white font-bold rounded-full hover:bg-primary transition-all shadow-xl shadow-primary/10">
             Contact Logistics Team
           </button>
         </div>
